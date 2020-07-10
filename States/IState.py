@@ -13,3 +13,6 @@ class IState:
 
     def mouseUp(self, event):
         pass
+
+    def paint(self, image):
+        pass

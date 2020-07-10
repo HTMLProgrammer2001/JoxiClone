@@ -17,3 +17,14 @@ class Circle(IObject):
     def contain(self, point: QPoint) -> bool:
         distance = (point.x() - self.context.center.x()) ** 2 + (point.y() - self.context.center.y()) ** 2
         return distance < self.context.radius ** 2
+
+    def moveTo(self, pos: QPoint):
+        self.context.center = pos
+
+    def moveBy(self, dx: int, dy: int):
+        point = self.context.center
+
+        point.setX(point.x() + dx)
+        point.setY(point.y() + dy)
+
+        self.context.center = point

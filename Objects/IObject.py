@@ -10,3 +10,11 @@ class IObject:
     @abstractmethod
     def contain(self, point: QPoint) -> bool:
         pass
+
+    @abstractmethod
+    def moveTo(self, pos: QPoint):
+        pass
+
+    @abstractmethod
+    def moveBy(self, dx: int, dy: int):
+        pass

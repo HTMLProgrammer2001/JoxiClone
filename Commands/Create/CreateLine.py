@@ -1,7 +1,6 @@
 from Commands.ICommand import ICommand
 from Context.LineContext import LineContext
 from Objects.Line import Line
-from history import History
 
 
 class CreateLine(ICommand):

@@ -16,9 +16,10 @@ class History:
     def addCommand(self, command):
         self.commands.append(command)
 
-        print(self.commands)
-
     def removeCommand(self):
+        if not len(self.commands):
+            return
+
         removed = self.commands.pop()
         removed.unexecute()
 

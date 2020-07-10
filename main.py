@@ -11,6 +11,7 @@ from States.CircleState import CircleState
 from States.EditState import EditState
 from States.IState import IState
 from Objects.IObject import IObject
+from Commands.ClearCommand import ClearCommand
 
 
 class Main(QMainWindow):
@@ -134,19 +135,18 @@ class Main(QMainWindow):
         commandsMenu.addActions(commandsGroup.actions())
 
     def clear(self):
-        # self.history.addCommand(
-        #     RectCommand(self.rect(), QPen(Qt.white, self.brushSize), True),
-        #     self
-        # )
+        command = ClearCommand(self)
+        command.execute()
+        self.history.addCommand(command)
         self.repaint()
 
     def save(self):
         path = QFileDialog().getSaveFileName(self, 'Save image', '', '*.jpg')
-        print(path)
         self.image.save(path[0])
 
     def back(self):
         self.history.removeCommand()
+        self.repaint()
 
     def setLineState(self):
         self.state = LineState(self)
@@ -191,6 +191,8 @@ class Main(QMainWindow):
 
         for obj in self.objects:
             obj.draw(self.image)
+
+        self.state.paint(self.image)
 
         screenQP = QPainter(self)
         screenQP.drawImage(self.rect(), self.image, self.image.rect())

@@ -1,7 +1,6 @@
 from Commands.ICommand import ICommand
 from Context.CircleContext import CircleContext
 from Objects.Circle import Circle
-from history import History
 
 
 class CreateCircle(ICommand):

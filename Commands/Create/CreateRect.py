@@ -1,7 +1,6 @@
 from Commands.ICommand import ICommand
 from Context.RectContext import RectContext
 from Objects.Rect import Rect
-from history import History
 
 
 class CreateRect(ICommand):

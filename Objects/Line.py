@@ -21,3 +21,20 @@ class Line(IObject):
         lineForm = lambda x: (x - begin.x()) * (end.y() - begin.y()) / (end.x() - begin.x()) + begin.y()
 
         return abs(lineForm(point.x()) - point.y()) < self.context.pen.width()
+
+    def moveTo(self, pos: QPoint):
+        pass
+
+    def moveBy(self, dx: int, dy: int):
+        beginPoint = self.context.begin
+        endPoint = self.context.end
+
+        beginPoint.setX(beginPoint.x() + dx)
+        beginPoint.setY(beginPoint.y() + dy)
+
+        self.context.begin = beginPoint
+
+        endPoint.setX(endPoint.x() + dx)
+        endPoint.setY(endPoint.y() + dy)
+
+        self.context.end = endPoint
