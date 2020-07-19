@@ -10,6 +10,7 @@ from States.Draw.RectState import RectState
 from States.Draw.CircleState import CircleState
 from States.MoveState import MoveState
 from States.Edit.EditLineState import EditLineState
+from States.Edit.EditCircleState import EditCircleState
 from States.IState import IState
 from Objects.IObject import IObject
 from Commands.ClearCommand import ClearCommand
@@ -158,7 +159,7 @@ class Main(QMainWindow):
 
     def select(self, obj: IObject):
         self.selected = obj
-        self.setState(EditLineState(self))
+        self.setState(EditCircleState(self))
 
     def unSelect(self):
         self.selected = None

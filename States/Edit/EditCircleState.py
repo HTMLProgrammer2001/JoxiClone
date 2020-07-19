@@ -1,4 +1,5 @@
 from PyQt5.QtGui import QPainter, QPen, QColor
+from PyQt5.QtCore import QPoint
 from math import sqrt
 import copy
 
@@ -6,7 +7,7 @@ from States.IState import IState
 from Commands.EditCommand import EditCommand
 
 
-class EditLineState(IState):
+class EditCircleState(IState):
     editType = None
 
     def __init__(self, app):
@@ -14,14 +15,11 @@ class EditLineState(IState):
         self.curContext = copy.copy(app.selected.context)
 
     def mouseDown(self, event):
-        pos = event.pos()
-        begin = self.app.selected.context.begin
-        end = self.app.selected.context.end
+        context = self.app.selected.context
+        point = context.center - QPoint(0, context.radius)
 
-        if sqrt((pos.x() - begin.x())**2 + (pos.y() - begin.y())**2) <= 3:
-            self.editType = 'BEGIN'
-        elif sqrt((pos.x() - end.x())**2 + (pos.y() - end.y())**2) <= 3:
-            self.editType = 'END'
+        if sqrt((event.pos().x() - point.x())**2 + (event.pos().y() - point.y())**2) <= 3:
+            self.editType = 'TOP'
         else:
             self.editType = 'NO'
 
@@ -38,17 +36,16 @@ class EditLineState(IState):
         if not self.editType:
             return
 
-        if self.editType == 'BEGIN':
-            self.app.selected.context.setBegin(event.pos())
-        elif self.editType == 'END':
-            self.app.selected.context.setEnd(event.pos())
+        if self.editType == 'TOP':
+            radPoint = event.pos() - self.curContext.center
+            self.app.selected.context.setRadius(radPoint.y())
 
         self.app.repaint()
 
     def paint(self, image):
+        center = self.app.selected.context.center
+        radius = self.app.selected.context.radius
+
         qp = QPainter(image)
-
         qp.setPen(QPen(QColor('blue'), 1))
-
-        qp.drawEllipse(self.app.selected.context.begin, 3, 3)
-        qp.drawEllipse(self.app.selected.context.end, 3, 3)
+        qp.drawEllipse(center - QPoint(0, radius), 3, 3)

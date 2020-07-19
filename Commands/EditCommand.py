@@ -1,10 +1,9 @@
 from Commands.ICommand import ICommand
-from Context.LineContext import LineContext
-from Objects.Line import Line
+from Objects.IObject import IObject
 
 
-class EditLineCommand(ICommand):
-    def __init__(self, object: Line, prevContext: LineContext, newContext: LineContext):
+class EditCommand(ICommand):
+    def __init__(self, object: IObject, prevContext, newContext):
         self.object = object
         self.prevContext = prevContext
         self.newContext = newContext
