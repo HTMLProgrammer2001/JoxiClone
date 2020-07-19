@@ -1,20 +1,23 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication, QAction, QActionGroup, QDesktopWidget, QFileDialog
-from PyQt5.QtGui import QImage, QPainter, QPen, QColor
+from PyQt5.QtGui import QImage, QPainter, QColor
 from PyQt5.QtCore import Qt
 import sys
-from typing import List
+from typing import List, Optional
 
 from history import History
-from States.LineState import LineState
-from States.RectState import RectState
-from States.CircleState import CircleState
-from States.EditState import EditState
+from States.Draw.LineState import LineState
+from States.Draw.RectState import RectState
+from States.Draw.CircleState import CircleState
+from States.MoveState import MoveState
+from States.Edit.EditLineState import EditLineState
 from States.IState import IState
 from Objects.IObject import IObject
 from Commands.ClearCommand import ClearCommand
 
 
 class Main(QMainWindow):
+    selected: Optional[IObject] = None
+
     def __init__(self):
         super().__init__()
 
@@ -37,6 +40,8 @@ class Main(QMainWindow):
         self.show()
 
         self.setWindowTitle('Paint')
+
+        toolbar = self.addToolBar('Context')
 
         # create menu
         menu = self.menuBar()
@@ -114,22 +119,22 @@ class Main(QMainWindow):
         LineAction = QAction('Line', self)
         LineAction.setCheckable(True)
         LineAction.setChecked(True)
-        LineAction.triggered.connect(self.setLineState)
+        LineAction.triggered.connect(lambda x: self.setState(LineState(self)))
         commandsGroup.addAction(LineAction)
 
         RectAction = QAction('Rect', self)
         RectAction.setCheckable(True)
-        RectAction.triggered.connect(self.setRectState)
+        RectAction.triggered.connect(lambda x: self.setState(RectState(self)))
         commandsGroup.addAction(RectAction)
 
         CircleAction = QAction('Cirlce', self)
         CircleAction.setCheckable(True)
-        CircleAction.triggered.connect(self.setCircleState)
+        CircleAction.triggered.connect(lambda x: self.setState(CircleState(self)))
         commandsGroup.addAction(CircleAction)
 
         EditAction = QAction('Edit', self)
         EditAction.setCheckable(True)
-        EditAction.triggered.connect(self.setEditState)
+        EditAction.triggered.connect(lambda x: self.setState(MoveState(self)))
         commandsGroup.addAction(EditAction)
 
         commandsMenu.addActions(commandsGroup.actions())
@@ -148,17 +153,16 @@ class Main(QMainWindow):
         self.history.removeCommand()
         self.repaint()
 
-    def setLineState(self):
-        self.state = LineState(self)
+    def setState(self, state: IState):
+        self.state = state
 
-    def setRectState(self):
-        self.state = RectState(self)
+    def select(self, obj: IObject):
+        self.selected = obj
+        self.setState(EditLineState(self))
 
-    def setCircleState(self):
-        self.state = CircleState(self)
-
-    def setEditState(self):
-        self.state = EditState(self)
+    def unSelect(self):
+        self.selected = None
+        self.setState(MoveState(self))
 
     def center(self):
         fr = self.frameGeometry()

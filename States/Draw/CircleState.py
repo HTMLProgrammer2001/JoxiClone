@@ -1,4 +1,4 @@
-from PyQt5.QtGui import QPen, QPainter
+from PyQt5.QtGui import QPen
 
 from States.IState import IState
 from Objects.Circle import Circle

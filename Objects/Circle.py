@@ -18,6 +18,9 @@ class Circle(IObject):
         distance = (point.x() - self.context.center.x()) ** 2 + (point.y() - self.context.center.y()) ** 2
         return distance < self.context.radius ** 2
 
+    def getPos(self) -> QPoint:
+        return QPoint(self.context.center.x(), self.context.center.y())
+
     def moveTo(self, pos: QPoint):
         self.context.center = pos
 

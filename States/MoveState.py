@@ -1,22 +1,31 @@
 from PyQt5.QtCore import QPoint
-from typing import List, Optional
+from typing import Optional
 
 from States.IState import IState
 from Objects.IObject import IObject
 from Commands.MoveCommand import MoveCommand
 
 
-class EditState(IState):
+class MoveState(IState):
     selected: Optional[IObject] = None
     lastPosition: Optional[QPoint] = None
     startPosition: Optional[QPoint] = None
 
+    isMoved: bool = False
+
+    def paint(self, image):
+        pass
+
     def mouseDown(self, event):
+        self.isMoved = False
+
         for obj in reversed(self.app.objects):
             if obj.contain(event.pos()):
                 self.selected = obj
                 self.lastPosition = event.pos()
-                self.startPosition = event.pos()
+                self.startPosition = obj.getPos()
+
+                print(self.startPosition)
                 break
         else:
             self.selected = None
@@ -27,10 +36,15 @@ class EditState(IState):
         if not self.startPosition:
             return
 
-        print(self.startPosition, self.lastPosition)
+        print('Start: ', self.startPosition)
+        print('End: ', self.selected.getPos())
 
-        command = MoveCommand(self.selected, self.startPosition, self.lastPosition)
+        command = MoveCommand(self.selected, self.startPosition, self.selected.getPos())
         self.app.history.addCommand(command)
+
+        if not self.isMoved:
+            self.app.select(self.selected)
+            self.app.repaint()
 
     def mouseMove(self, event):
         if self.selected:
@@ -40,3 +54,5 @@ class EditState(IState):
 
             self.lastPosition = pos
             self.app.repaint()
+
+            self.isMoved = True

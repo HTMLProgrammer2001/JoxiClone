@@ -22,8 +22,17 @@ class Line(IObject):
 
         return abs(lineForm(point.x()) - point.y()) < self.context.pen.width()
 
+    def getPos(self) -> QPoint:
+        return QPoint(self.context.begin.x(), self.context.begin.y())
+
     def moveTo(self, pos: QPoint):
-        pass
+        beginPoint = self.context.begin
+        endPoint = self.context.end
+
+        newEnd = QPoint(endPoint.x() + (pos.x() - beginPoint.x()), endPoint.y() + (pos.y() - beginPoint.y()))
+
+        self.context.setBegin(pos)
+        self.context.setEnd(newEnd)
 
     def moveBy(self, dx: int, dy: int):
         beginPoint = self.context.begin

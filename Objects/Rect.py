@@ -22,6 +22,10 @@ class Rect(IObject):
 
         return rect.left() < point.x() < rect.right() and rect.top() < point.y() < rect.bottom()
 
+    def getPos(self) -> QPoint:
+        pos = self.context.rect.topLeft()
+        return QPoint(pos.x(), pos.y())
+
     def moveTo(self, pos: QPoint):
         self.context.rect.moveTo(pos)
 
