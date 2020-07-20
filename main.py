@@ -11,6 +11,7 @@ from States.Draw.CircleState import CircleState
 from States.MoveState import MoveState
 from States.Edit.EditLineState import EditLineState
 from States.Edit.EditCircleState import EditCircleState
+from States.Edit.EditRectState import EditRectState
 from States.IState import IState
 from Objects.IObject import IObject
 from Commands.ClearCommand import ClearCommand
@@ -159,11 +160,12 @@ class Main(QMainWindow):
 
     def select(self, obj: IObject):
         self.selected = obj
-        self.setState(EditCircleState(self))
+        self.setState(EditRectState(self))
 
     def unSelect(self):
         self.selected = None
         self.setState(MoveState(self))
+        self.repaint()
 
     def center(self):
         fr = self.frameGeometry()
