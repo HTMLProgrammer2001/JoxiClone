@@ -16,6 +16,8 @@ class History:
     def addCommand(self, command):
         self.commands.append(command)
 
+        print('Histroy: ', len(self.commands))
+
     def removeCommand(self):
         if not len(self.commands):
             return

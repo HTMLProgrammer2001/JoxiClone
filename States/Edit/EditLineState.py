@@ -1,22 +1,20 @@
 from PyQt5.QtGui import QPainter, QPen, QColor
 from math import sqrt
-import copy
+from copy import copy
 
 from States.IState import IState
+from States.Edit.IEditState import IEditState
 from Commands.EditCommand import EditCommand
+from Context.DrawData.LineDrawContext import LineDrawContext
+from Toolbars.LineToolbar import LineToolbar
+from Toolbars.IToolbar import IToolbar
 
 
-class EditLineState(IState):
-    editType = None
-
-    def __init__(self, app):
-        self.app = app
-        self.curContext = copy.copy(app.selected.context)
-
+class EditLineState(IEditState, IState):
     def mouseDown(self, event):
         pos = event.pos()
-        begin = self.app.selected.context.begin
-        end = self.app.selected.context.end
+        begin = self.selected.context.begin
+        end = self.selected.context.end
 
         if sqrt((pos.x() - begin.x())**2 + (pos.y() - begin.y())**2) <= 3:
             self.editType = 'BEGIN'
@@ -25,23 +23,14 @@ class EditLineState(IState):
         else:
             self.editType = 'NO'
 
-    def mouseUp(self, event):
-        command = EditCommand(self.app.selected, self.curContext, self.app.selected.context)
-        command.execute()
-
-        self.app.history.addCommand(command)
-
-        if self.editType == 'NO':
-            self.app.unSelect()
-
     def mouseMove(self, event):
         if not self.editType:
             return
 
         if self.editType == 'BEGIN':
-            self.app.selected.context.setBegin(event.pos())
+            self.selected.context.setBegin(event.pos())
         elif self.editType == 'END':
-            self.app.selected.context.setEnd(event.pos())
+            self.selected.context.setEnd(event.pos())
 
         self.app.repaint()
 
@@ -50,5 +39,23 @@ class EditLineState(IState):
 
         qp.setPen(QPen(QColor('blue'), 1))
 
-        qp.drawEllipse(self.app.selected.context.begin, 3, 3)
-        qp.drawEllipse(self.app.selected.context.end, 3, 3)
+        qp.drawEllipse(self.selected.context.begin, 3, 3)
+        qp.drawEllipse(self.selected.context.end, 3, 3)
+
+    def execChange(self):
+        command = EditCommand(self.selected, self.curContext, self.selected.context)
+        command.execute()
+
+        self.app.history.addCommand(command)
+        self.curContext = copy(self.selected.context)
+
+    def changeDraw(self, newDraw: LineDrawContext):
+        print(newDraw)
+
+        self.selected.context.setDraw(newDraw)
+
+        self.execChange()
+        self.app.repaint()
+
+    def getToolbar(self) -> IToolbar:
+        return LineToolbar()

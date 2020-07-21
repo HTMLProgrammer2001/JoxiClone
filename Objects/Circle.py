@@ -2,7 +2,7 @@ from PyQt5.QtGui import QPainter
 from PyQt5.QtCore import QPoint
 
 from Objects.IObject import IObject
-from Context.CircleContext import CircleContext
+from Context.ObjectData.CircleContext import CircleContext
 
 
 class Circle(IObject):

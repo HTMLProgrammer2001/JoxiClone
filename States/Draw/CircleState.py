@@ -3,7 +3,7 @@ from PyQt5.QtGui import QPen
 from States.IState import IState
 from Objects.Circle import Circle
 from Commands.Create.CreateCircle import CreateCircle
-from Context.CircleContext import CircleContext
+from Context.ObjectData.CircleContext import CircleContext
 
 
 class CircleState(IState):

@@ -1,5 +1,5 @@
 from Commands.ICommand import ICommand
-from Context.LineContext import LineContext
+from Context.ObjectData.LineContext import LineContext
 from Objects.Line import Line
 
 

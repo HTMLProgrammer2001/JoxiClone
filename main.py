@@ -1,25 +1,24 @@
-from PyQt5.QtWidgets import QMainWindow, QApplication, QAction, QActionGroup, QDesktopWidget, QFileDialog
+from PyQt5.QtWidgets import QMainWindow, QApplication, QAction, QActionGroup, QDesktopWidget, QFileDialog, \
+    QToolBar
 from PyQt5.QtGui import QImage, QPainter, QColor
 from PyQt5.QtCore import Qt
 import sys
-from typing import List, Optional
+from typing import List
 
 from history import History
 from States.Draw.LineState import LineState
 from States.Draw.RectState import RectState
 from States.Draw.CircleState import CircleState
 from States.MoveState import MoveState
-from States.Edit.EditLineState import EditLineState
-from States.Edit.EditCircleState import EditCircleState
-from States.Edit.EditRectState import EditRectState
 from States.IState import IState
 from Objects.IObject import IObject
 from Commands.ClearCommand import ClearCommand
 
+from Factories.EditStateFactory import EditStateFactory
+from Toolbars.NoneToolbar import NoneToolbar
+
 
 class Main(QMainWindow):
-    selected: Optional[IObject] = None
-
     def __init__(self):
         super().__init__()
 
@@ -50,7 +49,6 @@ class Main(QMainWindow):
         fileMenu = menu.addMenu('File')
         sizeMenu = menu.addMenu('Size')
         brushMenu = menu.addMenu('Brush')
-        commandsMenu = menu.addMenu('Commands')
 
         sizeGroup = QActionGroup(self)
         colorGroup = QActionGroup(self)
@@ -139,13 +137,30 @@ class Main(QMainWindow):
         EditAction.triggered.connect(lambda x: self.setState(MoveState(self)))
         commandsGroup.addAction(EditAction)
 
-        commandsMenu.addActions(commandsGroup.actions())
+        self.commandsToolbar = QToolBar('Commands')
+        self.commandsToolbar.setMovable(False)
+        self.commandsToolbar.addActions(commandsGroup.actions())
+
+        self.contextToolbar = NoneToolbar('Context')
+        self.contextToolbar.setMovable(False)
+        self.contextToolbar.destroy()
+
+        self.addToolBar(Qt.LeftToolBarArea, self.commandsToolbar)
+        self.addToolBar(Qt.TopToolBarArea, self.contextToolbar)
 
     def clear(self):
         command = ClearCommand(self)
         command.execute()
         self.history.addCommand(command)
         self.repaint()
+
+    def setToolbar(self, toolbar):
+        self.contextToolbar.destroy()
+        self.contextToolbar.hide()
+
+        self.contextToolbar = toolbar
+
+        self.addToolBar(Qt.TopToolBarArea, self.contextToolbar)
 
     def save(self):
         path = QFileDialog().getSaveFileName(self, 'Save image', '', '*.jpg')
@@ -159,11 +174,9 @@ class Main(QMainWindow):
         self.state = state
 
     def select(self, obj: IObject):
-        self.selected = obj
-        self.setState(EditRectState(self))
+        self.setState(EditStateFactory.getEditState(self, obj))
 
     def unSelect(self):
-        self.selected = None
         self.setState(MoveState(self))
         self.repaint()
 

@@ -1,6 +1,6 @@
-from Context.CircleContext import CircleContext
-from Context.RectContext import RectContext
-from Context.LineContext import LineContext
+from Context.ObjectData.CircleContext import CircleContext
+from Context.ObjectData.RectContext import RectContext
+from Context.ObjectData.LineContext import LineContext
 
 from Objects.Circle import Circle
 from Objects.Rect import Rect

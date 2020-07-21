@@ -4,7 +4,7 @@ from PyQt5.QtGui import QPen
 from States.IState import IState
 from Objects.Rect import Rect
 from Commands.Create.CreateRect import CreateRect
-from Context.RectContext import RectContext
+from Context.ObjectData.RectContext import RectContext
 
 
 class RectState(IState):

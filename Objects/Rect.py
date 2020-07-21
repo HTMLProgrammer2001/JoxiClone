@@ -2,7 +2,7 @@ from PyQt5.QtGui import QPainter
 from PyQt5.QtCore import QPoint
 
 from Objects.IObject import IObject
-from Context.RectContext import RectContext
+from Context.ObjectData.RectContext import RectContext
 
 
 class Rect(IObject):

@@ -1,8 +1,9 @@
-from PyQt5.QtGui import QPainter
+from PyQt5.QtGui import QPainter, QPen
 from PyQt5.QtCore import QPoint
 
 from Objects.IObject import IObject
-from Context.LineContext import LineContext
+from Context.ObjectData.LineContext import LineContext
+from Context.DrawData.LineDrawContext import LineDrawContext
 
 
 class Line(IObject):
@@ -11,7 +12,7 @@ class Line(IObject):
 
     def draw(self, image):
         qp = QPainter(image)
-        qp.setPen(self.context.pen)
+        qp.setPen(QPen(self.context.draw.stroke, self.context.draw.width))
         qp.drawLine(self.context.begin, self.context.end)
 
     def contain(self, point: QPoint) -> bool:
@@ -20,7 +21,7 @@ class Line(IObject):
 
         lineForm = lambda x: (x - begin.x()) * (end.y() - begin.y()) / (end.x() - begin.x()) + begin.y()
 
-        return abs(lineForm(point.x()) - point.y()) < self.context.pen.width()
+        return abs(lineForm(point.x()) - point.y()) < self.context.draw.width
 
     def getPos(self) -> QPoint:
         return QPoint(self.context.begin.x(), self.context.begin.y())
@@ -41,9 +42,12 @@ class Line(IObject):
         beginPoint.setX(beginPoint.x() + dx)
         beginPoint.setY(beginPoint.y() + dy)
 
-        self.context.begin = beginPoint
+        self.context.setBegin(beginPoint)
 
         endPoint.setX(endPoint.x() + dx)
         endPoint.setY(endPoint.y() + dy)
 
-        self.context.end = endPoint
+        self.context.setEnd(endPoint)
+
+    def changeDraw(self, drawContext: LineDrawContext):
+        self.context.setDraw(drawContext)

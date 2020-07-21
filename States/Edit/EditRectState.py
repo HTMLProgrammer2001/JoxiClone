@@ -3,19 +3,16 @@ from math import sqrt
 import copy
 
 from States.IState import IState
+from States.Edit.IEditState import IEditState
 from Commands.EditCommand import EditCommand
 
 
-class EditRectState(IState):
+class EditRectState(IEditState, IState):
     editType = None
 
-    def __init__(self, app):
-        self.app = app
-        self.curContext = copy.copy(app.selected.context)
-
     def mouseDown(self, event):
-        botRight = self.app.selected.context.rect.bottomRight()
-        topLeft = self.app.selected.context.rect.topLeft()
+        botRight = self.selected.context.rect.bottomRight()
+        topLeft = self.selected.context.rect.topLeft()
 
         if sqrt((event.pos().x() - botRight.x())**2 + (event.pos().y() - botRight.y())**2) <= 3:
             self.editType = 'BOTTOMRIGHT'
@@ -25,7 +22,7 @@ class EditRectState(IState):
             self.editType = 'NO'
 
     def mouseUp(self, event):
-        command = EditCommand(self.app.selected, self.curContext, self.app.selected.context)
+        command = EditCommand(self.selected, self.curContext, self.selected.context)
         command.execute()
 
         self.app.history.addCommand(command)
@@ -37,20 +34,18 @@ class EditRectState(IState):
         if not self.editType:
             return
 
-        print('Edit type: ', self.editType)
-
-        rect = copy.copy(self.app.selected.context.rect)
+        rect = copy.copy(self.selected.context.rect)
 
         if self.editType == 'BOTTOMRIGHT':
             rect.setBottomRight(event.pos())
         elif self.editType == 'TOPLEFT':
             rect.setTopLeft(event.pos())
 
-        self.app.selected.context.setRect(rect)
+        self.selected.context.setRect(rect)
         self.app.repaint()
 
     def paint(self, image):
-        context = self.app.selected.context
+        context = self.selected.context
 
         qp = QPainter(image)
         qp.setPen(QPen(QColor('blue'), 1))

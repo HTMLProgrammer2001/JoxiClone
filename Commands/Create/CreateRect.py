@@ -1,5 +1,5 @@
 from Commands.ICommand import ICommand
-from Context.RectContext import RectContext
+from Context.ObjectData.RectContext import RectContext
 from Objects.Rect import Rect
 
 

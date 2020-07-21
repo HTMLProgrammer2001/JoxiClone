@@ -1,15 +1,19 @@
-from PyQt5.QtGui import QPen
-
 from States.IState import IState
 from Objects.Line import Line
 from Commands.Create.CreateLine import CreateLine
-from Context.LineContext import LineContext
+from Context.ObjectData.LineContext import LineContext
+from Toolbars.LineToolbar import LineToolbar
 
 
 class LineState(IState):
     begin = None
     end = None
     isDrawing = False
+
+    def __init__(self, app):
+        self.app = app
+
+        self.app.setToolbar(LineToolbar())
 
     def mouseDown(self, event):
         self.begin = event.pos()
@@ -41,7 +45,6 @@ class LineState(IState):
         line.draw(image)
 
     def createContext(self) -> LineContext:
-        context = LineContext(self.begin, self.end)
-        context.setPen(QPen(self.app.brushColor, self.app.brushSize))
+        context = LineContext(self.begin, self.end, self.app.contextToolbar.getContext())
 
         return context

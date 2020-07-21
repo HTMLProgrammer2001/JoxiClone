@@ -1,5 +1,5 @@
 from Commands.ICommand import ICommand
-from Context.CircleContext import CircleContext
+from Context.ObjectData.CircleContext import CircleContext
 from Objects.Circle import Circle
 
 

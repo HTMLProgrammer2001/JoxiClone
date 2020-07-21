@@ -24,8 +24,6 @@ class MoveState(IState):
                 self.selected = obj
                 self.lastPosition = event.pos()
                 self.startPosition = obj.getPos()
-
-                print(self.startPosition)
                 break
         else:
             self.selected = None
@@ -36,15 +34,13 @@ class MoveState(IState):
         if not self.startPosition:
             return
 
-        print('Start: ', self.startPosition)
-        print('End: ', self.selected.getPos())
-
-        command = MoveCommand(self.selected, self.startPosition, self.selected.getPos())
-        self.app.history.addCommand(command)
-
         if not self.isMoved:
             self.app.select(self.selected)
             self.app.repaint()
+            return
+
+        command = MoveCommand(self.selected, self.startPosition, self.selected.getPos())
+        self.app.history.addCommand(command)
 
     def mouseMove(self, event):
         if self.selected:
