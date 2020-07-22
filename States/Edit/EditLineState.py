@@ -1,4 +1,7 @@
 from PyQt5.QtGui import QPainter, QPen, QColor
+from PyQt5.Qt import QKeyEvent
+from PyQt5.QtCore import QPoint
+from PyQt5.Qt import Qt
 from math import sqrt
 from copy import copy
 
@@ -23,14 +26,38 @@ class EditLineState(IEditState, IState):
         else:
             self.editType = 'NO'
 
-    def mouseMove(self, event):
+    def mouseMove(self, event: QKeyEvent):
         if not self.editType:
             return
 
+        begin = self.selected.context.begin
+        end = self.selected.context.end
+
+        newPoint: QPoint = event.pos()
+
         if self.editType == 'BEGIN':
-            self.selected.context.setBegin(event.pos())
+            # Shift pressed
+            if event.modifiers() == Qt.ShiftModifier:
+                # Parallel to x axis
+                if abs(begin.x() - event.pos().x()) > abs(begin.y() - event.pos().y()):
+                    newPoint = QPoint(event.pos().x(), end.y())
+                else:
+                    # Parallel to Y axis
+                    newPoint = QPoint(end.x(), event.pos().y())
+
+            self.selected.context.setBegin(newPoint)
+
         elif self.editType == 'END':
-            self.selected.context.setEnd(event.pos())
+            # Shift pressed
+            if event.modifiers() == Qt.ShiftModifier:
+                # Parallel to x axis
+                if abs(end.x() - event.pos().x()) > abs(end.y() - event.pos().y()):
+                    newPoint = QPoint(event.pos().x(), begin.y())
+                else:
+                    # Parallel to y axis
+                    newPoint = QPoint(begin.x(), event.pos().y())
+
+            self.selected.context.setEnd(newPoint)
 
         self.app.repaint()
 
@@ -50,8 +77,6 @@ class EditLineState(IEditState, IState):
         self.curContext = copy(self.selected.context)
 
     def changeDraw(self, newDraw: LineDrawContext):
-        print(newDraw)
-
         self.selected.context.setDraw(newDraw)
 
         self.execChange()

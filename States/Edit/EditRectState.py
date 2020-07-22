@@ -5,6 +5,8 @@ import copy
 from States.IState import IState
 from States.Edit.IEditState import IEditState
 from Commands.EditCommand import EditCommand
+from Toolbars.RectToolbar import RectToolbar
+from Toolbars.IToolbar import IToolbar
 
 
 class EditRectState(IEditState, IState):
@@ -20,15 +22,6 @@ class EditRectState(IEditState, IState):
             self.editType = 'TOPLEFT'
         else:
             self.editType = 'NO'
-
-    def mouseUp(self, event):
-        command = EditCommand(self.selected, self.curContext, self.selected.context)
-        command.execute()
-
-        self.app.history.addCommand(command)
-
-        if self.editType == 'NO':
-            self.app.unSelect()
 
     def mouseMove(self, event):
         if not self.editType:
@@ -52,3 +45,19 @@ class EditRectState(IEditState, IState):
 
         qp.drawEllipse(context.rect.bottomRight(), 3, 3)
         qp.drawEllipse(context.rect.topLeft(), 3, 3)
+
+    def execChange(self):
+        command = EditCommand(self.selected, self.curContext, self.selected.context)
+        command.execute()
+
+        self.app.history.addCommand(command)
+        self.curContext = copy.copy(self.selected.context)
+
+    def changeDraw(self, newDraw):
+        self.selected.context.setDraw(newDraw)
+
+        self.execChange()
+        self.app.repaint()
+
+    def getToolbar(self) -> IToolbar:
+        return RectToolbar()

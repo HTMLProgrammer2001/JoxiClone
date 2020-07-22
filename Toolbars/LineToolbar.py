@@ -25,7 +25,7 @@ class LineToolbar(IToolbar):
         self.sizeSlider = QSlider()
         self.sizeSlider.setOrientation(Qt.Horizontal)
         self.sizeSlider.setFixedWidth(50)
-        self.sizeSlider.setMaximum(100)
+        self.sizeSlider.setMaximum(50)
         self.sizeSlider.setMinimum(0)
         self.sizeSlider.setValue(10)
         self.sizeSlider.valueChanged[int].connect(self.changeSize)
@@ -33,6 +33,7 @@ class LineToolbar(IToolbar):
 
         self.sizeLabel = QLabel()
 
+        self.addWidget(QLabel('Stroke width: '))
         self.addWidget(self.sizeSlider)
         self.addWidget(self.sizeLabel)
         self.addSeparator()
@@ -44,7 +45,9 @@ class LineToolbar(IToolbar):
 
         self.colorLabel.mousePressEvent = self.changeColor
 
+        self.addWidget(QLabel('Stroke color: '))
         self.addWidget(self.colorLabel)
+        self.addSeparator()
 
     def changeColor(self, event):
         color = QColorDialog().getColor(self.color)

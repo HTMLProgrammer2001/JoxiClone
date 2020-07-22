@@ -1,3 +1,7 @@
+from PyQt5.Qt import QKeyEvent
+from PyQt5.Qt import Qt
+from PyQt5.QtCore import QPoint
+
 from States.IState import IState
 from Objects.Line import Line
 from Commands.Create.CreateLine import CreateLine
@@ -33,8 +37,17 @@ class LineState(IState):
             self.begin = None
             self.end = None
 
-    def mouseMove(self, event):
-        self.end = event.pos()
+    def mouseMove(self, event: QKeyEvent):
+        if event.modifiers() == Qt.ShiftModifier:
+
+            if abs(event.pos().x() - self.begin.x()) > abs(event.pos().y() - self.begin.y()):
+                self.end = QPoint(event.pos().x(), self.begin.y())
+            else:
+                self.end = QPoint(self.begin.x(), event.pos().y())
+
+        else:
+            self.end = event.pos()
+
         self.app.repaint()
 
     def paint(self, image):

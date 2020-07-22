@@ -1,4 +1,4 @@
-from PyQt5.QtGui import QPainter
+from PyQt5.QtGui import QPainter, QPen, QColor
 from PyQt5.QtCore import QPoint
 
 from Objects.IObject import IObject
@@ -12,10 +12,9 @@ class Rect(IObject):
     def draw(self, image):
         qp = QPainter(image)
 
-        if self.context.fill:
-            qp.fillRect(self.context.rect, self.context.pen.color())
-        else:
-            qp.drawRect(self.context.rect)
+        qp.fillRect(self.context.rect, self.context.draw.fill)
+        qp.setPen(QPen(self.context.draw.stroke, self.context.draw.width))
+        qp.drawRect(self.context.rect)
 
     def contain(self, point: QPoint) -> bool:
         rect = self.context.rect

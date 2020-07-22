@@ -1,5 +1,6 @@
 from PyQt5.QtGui import QPainter, QPen
 from PyQt5.QtCore import QPoint
+from math import sqrt
 
 from Objects.IObject import IObject
 from Context.ObjectData.LineContext import LineContext
@@ -19,9 +20,11 @@ class Line(IObject):
         begin = self.context.begin
         end = self.context.end
 
-        lineForm = lambda x: (x - begin.x()) * (end.y() - begin.y()) / (end.x() - begin.x()) + begin.y()
+        distance = lambda point, point2: sqrt((point.x() - point2.x())**2 + (point.y() - point2.y())**2)
+        lineContain = lambda point: abs(distance(begin, point) + distance(end, point) - \
+                                        distance(begin, end)) < self.context.draw.width
 
-        return abs(lineForm(point.x()) - point.y()) < self.context.draw.width
+        return lineContain(point)
 
     def getPos(self) -> QPoint:
         return QPoint(self.context.begin.x(), self.context.begin.y())

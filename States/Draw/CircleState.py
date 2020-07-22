@@ -4,12 +4,18 @@ from States.IState import IState
 from Objects.Circle import Circle
 from Commands.Create.CreateCircle import CreateCircle
 from Context.ObjectData.CircleContext import CircleContext
+from Toolbars.RectToolbar import RectToolbar
 
 
 class CircleState(IState):
     begin = None
     isDrawing = False
     end = None
+
+    def __init__(self, app):
+        self.app = app
+
+        self.app.setToolbar(RectToolbar())
 
     def mouseDown(self, event):
         self.begin = event.pos()

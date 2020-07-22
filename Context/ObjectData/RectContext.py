@@ -1,18 +1,15 @@
 from PyQt5.QtCore import QRect
-from PyQt5.QtGui import QPen
+
+from Context.DrawData.RectDrawContext import RectDrawContext
 
 
 class RectContext:
-    def __init__(self, rect: QRect, pen: QPen = None, fill: bool = False):
+    def __init__(self, rect: QRect, draw: RectDrawContext):
         self.rect = rect
-        self.pen = pen
-        self.fill = fill
+        self.draw = draw
 
     def setRect(self, rect: QRect):
         self.rect = rect
 
-    def setPen(self, pen: QPen):
-        self.pen = pen
-
-    def setFill(self, fill: bool):
-        self.fill = fill
+    def setDraw(self, newDraw: RectDrawContext):
+        self.draw = newDraw
