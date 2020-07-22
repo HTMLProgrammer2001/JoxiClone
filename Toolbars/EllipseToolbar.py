@@ -1,13 +1,13 @@
 from Toolbars.IToolbar import IToolbar
 from Toolbars.IDrawPrimitiveToolbar import IDrawPrimitiveToolbar
-from Context.DrawData.RectDrawContext import RectDrawContext
+from Context.DrawData.EllipseDrawContext import EllipseDrawContext
 
 
-class RectToolbar(IDrawPrimitiveToolbar, IToolbar):
+class EllipseToolbar(IDrawPrimitiveToolbar, IToolbar):
     def getContext(self):
-        return RectDrawContext(self.fill, self.stroke, self.size)
+        return EllipseDrawContext(self.fill, self.stroke, self.size)
 
-    def setContext(self, context: RectDrawContext):
+    def setContext(self, context: EllipseDrawContext):
         self.size = context.width
         self.stroke = context.stroke
         self.fill = context.fill

@@ -8,7 +8,7 @@ from typing import List
 from history import History
 from States.Draw.LineState import LineState
 from States.Draw.RectState import RectState
-from States.Draw.CircleState import CircleState
+from States.Draw.EllipseState import EllipseState
 from States.MoveState import MoveState
 from States.IState import IState
 from Objects.IObject import IObject
@@ -129,7 +129,7 @@ class Main(QMainWindow):
 
         CircleAction = QAction('Cirlce', self)
         CircleAction.setCheckable(True)
-        CircleAction.triggered.connect(lambda x: self.setState(CircleState(self)))
+        CircleAction.triggered.connect(lambda x: self.setState(EllipseState(self)))
         commandsGroup.addAction(CircleAction)
 
         EditAction = QAction('Edit', self)

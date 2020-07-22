@@ -1,20 +1,20 @@
 from Commands.ICommand import ICommand
-from Context.ObjectData.CircleContext import CircleContext
-from Objects.Circle import Circle
+from Context.ObjectData.EllipseContext import EllipseContext
+from Objects.Ellipse import Ellipse
 
 
-class CreateCircle(ICommand):
-    circle: Circle = None
+class CreateEllipse(ICommand):
+    ellipse: Ellipse = None
 
-    def __init__(self, app, context: CircleContext):
+    def __init__(self, app, context: EllipseContext):
         self.app = app
         self.context = context
 
     def execute(self):
-        self.circle = Circle(self.context)
-        self.app.objects.append(self.circle)
+        self.ellipse = Ellipse(self.context)
+        self.app.objects.append(self.ellipse)
         self.app.repaint()
 
     def unexecute(self):
-        self.app.objects.remove(self.circle)
+        self.app.objects.remove(self.ellipse)
         self.app.repaint()

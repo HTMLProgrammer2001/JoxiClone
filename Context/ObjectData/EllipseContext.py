@@ -1,18 +1,23 @@
 from PyQt5.QtCore import QPoint
-from PyQt5.QtGui import QPen
+
+from Context.DrawData.EllipseDrawContext import EllipseDrawContext
 
 
-class CircleContext:
-    def __init__(self, center: QPoint = None, radius: int = 0, pen: QPen = None):
+class EllipseContext:
+    def __init__(self, center: QPoint, radiusX: int = 0, radiusY: int = 0, draw: EllipseDrawContext = None):
         self.center = center
-        self.radius = radius
-        self.pen = pen
+        self.radiusX = radiusX
+        self.radiusY = radiusY
+        self.draw = draw
 
     def setCenter(self, center: QPoint):
         self.center = center
 
-    def setRadius(self, radius: int):
-        self.radius = radius
+    def setRadiusX(self, radius: int):
+        self.radiusX = radius
 
-    def setPen(self, pen: QPen):
-        self.pen = pen
+    def setRadiusY(self, radius: int):
+        self.radiusY = radius
+
+    def setDraw(self, newDraw: EllipseDrawContext):
+        self.draw = newDraw

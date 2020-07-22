@@ -1,13 +1,11 @@
-from PyQt5.QtGui import QPen
-
 from States.IState import IState
-from Objects.Circle import Circle
-from Commands.Create.CreateCircle import CreateCircle
-from Context.ObjectData.CircleContext import CircleContext
-from Toolbars.RectToolbar import RectToolbar
+from Objects.Ellipse import Ellipse
+from Commands.Create.CreateEllipse import CreateEllipse
+from Context.ObjectData.EllipseContext import EllipseContext
+from Toolbars.EllipseToolbar import EllipseToolbar
 
 
-class CircleState(IState):
+class EllipseState(IState):
     begin = None
     isDrawing = False
     end = None
@@ -15,7 +13,7 @@ class CircleState(IState):
     def __init__(self, app):
         self.app = app
 
-        self.app.setToolbar(RectToolbar())
+        self.app.setToolbar(EllipseToolbar())
 
     def mouseDown(self, event):
         self.begin = event.pos()
@@ -25,7 +23,7 @@ class CircleState(IState):
         if self.isDrawing and self.end:
             context = self.createContext()
 
-            command = CreateCircle(self.app, context)
+            command = CreateEllipse(self.app, context)
             command.execute()
 
             self.app.history.addCommand(command)
@@ -43,12 +41,14 @@ class CircleState(IState):
         if not self.begin:
             return
 
-        circle = Circle(self.createContext())
+        circle = Ellipse(self.createContext())
         circle.draw(image)
 
-    def createContext(self) -> CircleContext:
-        context = CircleContext(self.begin)
-        context.setRadius(max(abs(self.end.x() - self.begin.x()), abs(self.end.y() - self.begin.y())))
-        context.setPen(QPen(self.app.brushColor, self.app.brushSize))
+    def createContext(self) -> EllipseContext:
+        context = EllipseContext(self.begin)
+
+        context.setRadiusX(abs(self.end.x() - self.begin.x()))
+        context.setRadiusY(abs(self.end.y() - self.begin.y()))
+        context.setDraw(self.app.contextToolbar.getContext())
 
         return context
