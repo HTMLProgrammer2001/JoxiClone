@@ -14,7 +14,6 @@ from States.IState import IState
 from Objects.IObject import IObject
 from Commands.ClearCommand import ClearCommand
 
-from Factories.EditStateFactory import EditStateFactory
 from Toolbars.NoneToolbar import NoneToolbar
 
 
@@ -127,7 +126,7 @@ class Main(QMainWindow):
         RectAction.triggered.connect(lambda x: self.setState(RectState(self)))
         commandsGroup.addAction(RectAction)
 
-        CircleAction = QAction('Cirlce', self)
+        CircleAction = QAction('Ellipse', self)
         CircleAction.setCheckable(True)
         CircleAction.triggered.connect(lambda x: self.setState(EllipseState(self)))
         commandsGroup.addAction(CircleAction)
@@ -174,7 +173,7 @@ class Main(QMainWindow):
         self.state = state
 
     def select(self, obj: IObject):
-        self.setState(EditStateFactory.getEditState(self, obj))
+        self.setState(obj.getEditMode(self))
 
     def unSelect(self):
         self.setState(MoveState(self))

@@ -1,5 +1,5 @@
 from PyQt5.QtGui import QPainter, QPen, QColor
-from PyQt5.QtCore import QPoint
+from PyQt5.QtCore import QPoint, Qt
 from math import sqrt
 from copy import copy
 
@@ -7,7 +7,7 @@ from States.IState import IState
 from States.Edit.IEditState import IEditState
 from Commands.EditCommand import EditCommand
 from Toolbars.IToolbar import IToolbar
-from Toolbars.EllipseToolbar import EllipseToolbar
+from Toolbars.ObjectToolbars.EllipseToolbar import EllipseToolbar
 
 
 class EditEllipseState(IEditState, IState):
@@ -37,8 +37,13 @@ class EditEllipseState(IEditState, IState):
 
         if self.editType == 'TOP':
             radPoint = event.pos() - self.curContext.center
-            self.selected.context.setRadiusX(radPoint.x())
-            self.selected.context.setRadiusY(radPoint.y())
+
+            if event.modifiers() & Qt.ShiftModifier:
+                self.selected.context.setRadiusX(max(radPoint.x(), radPoint.y()))
+                self.selected.context.setRadiusY(max(radPoint.y(), radPoint.x()))
+            else:
+                self.selected.context.setRadiusX(radPoint.x())
+                self.selected.context.setRadiusY(radPoint.y())
 
         self.app.repaint()
 

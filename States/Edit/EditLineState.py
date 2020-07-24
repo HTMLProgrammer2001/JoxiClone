@@ -9,7 +9,7 @@ from States.IState import IState
 from States.Edit.IEditState import IEditState
 from Commands.EditCommand import EditCommand
 from Context.DrawData.LineDrawContext import LineDrawContext
-from Toolbars.LineToolbar import LineToolbar
+from Toolbars.ObjectToolbars.LineToolbar import LineToolbar
 from Toolbars.IToolbar import IToolbar
 
 
@@ -30,11 +30,10 @@ class EditLineState(IEditState, IState):
         if not self.editType:
             return
 
-        begin = self.selected.context.begin
-        end = self.selected.context.end
+        begin = self.curContext.begin
+        end = self.curContext.end
 
         newPoint: QPoint = event.pos()
-
         if self.editType == 'BEGIN':
             # Shift pressed
             if event.modifiers() == Qt.ShiftModifier:

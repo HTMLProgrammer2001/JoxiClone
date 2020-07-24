@@ -1,8 +1,10 @@
-from PyQt5.QtGui import QPainter
+from PyQt5.QtGui import QPainter, QPen
 from PyQt5.QtCore import QPoint
 
 from Objects.IObject import IObject
 from Context.ObjectData.EllipseContext import EllipseContext
+from States.Edit.IEditState import IEditState
+from States.Edit.EditEllipseState import EditEllipseState
 
 
 class Ellipse(IObject):
@@ -13,6 +15,7 @@ class Ellipse(IObject):
         qp = QPainter(image)
 
         qp.setBrush(self.context.draw.fill)
+        qp.setPen(QPen(self.context.draw.stroke, self.context.draw.width))
         qp.drawEllipse(self.context.center, self.context.radiusX, self.context.radiusY)
 
     def contain(self, point: QPoint) -> bool:
@@ -34,3 +37,6 @@ class Ellipse(IObject):
         point.setY(point.y() + dy)
 
         self.context.center = point
+
+    def getEditMode(self, app) -> IEditState:
+        return EditEllipseState(app, self)

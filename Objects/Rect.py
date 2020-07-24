@@ -3,6 +3,8 @@ from PyQt5.QtCore import QPoint
 
 from Objects.IObject import IObject
 from Context.ObjectData.RectContext import RectContext
+from States.Edit.EditRectState import EditRectState
+from States.Edit.IEditState import IEditState
 
 
 class Rect(IObject):
@@ -33,3 +35,6 @@ class Rect(IObject):
         newPoint = QPoint(topLeft.x() + dx, topLeft.y() + dy)
 
         self.context.rect.moveTopLeft(newPoint)
+
+    def getEditMode(self, app) -> IEditState:
+        return EditRectState(app, self)

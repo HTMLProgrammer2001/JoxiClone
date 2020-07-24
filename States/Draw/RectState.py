@@ -6,7 +6,7 @@ from States.IState import IState
 from Objects.Rect import Rect
 from Commands.Create.CreateRect import CreateRect
 from Context.ObjectData.RectContext import RectContext
-from Toolbars.RectToolbar import RectToolbar
+from Toolbars.ObjectToolbars.RectToolbar import RectToolbar
 
 
 class RectState(IState):
@@ -37,28 +37,24 @@ class RectState(IState):
             self.end = None
 
     def mouseMove(self, event: QKeyEvent):
+        end = event.pos()
+
         if event.modifiers() & Qt.ShiftModifier:
             # if shift then draw square with bigger size
             if abs(event.pos().x() - self.begin.x()) > abs(event.pos().y() - self.begin.y()):
-                self.end = QPoint(event.pos().x(), event.pos().x() - self.begin.x() + self.begin.x())
+                end = QPoint(end.x(), end.x() - self.begin.x() + self.begin.y())
             else:
-                self.end = QPoint(event.pos().y() - self.begin.y() + self.begin.y(), event.pos().y())
+                end = QPoint(end.y() - self.begin.y() + self.begin.x(), end.y())
 
-            self.app.repaint()
-
-        elif event.modifiers() & Qt.AltModifier:
+        if event.modifiers() & Qt.AltModifier:
             # calculate new end point
-            newEndX = event.pos().x() + (event.pos().x() - self.begin.x())
-            newEndY = event.pos().y() + (event.pos().y() - self.begin.y())
+            newEndX = end.x() + (end.x() - self.begin.x())
+            newEndY = end.y() + (end.y() - self.begin.y())
 
-            self.end = QPoint(newEndX, newEndY)
+            end = QPoint(newEndX, newEndY)
 
-            # repaint
-            self.app.repaint()
-        else:
-            # simple rectangle
-            self.end = event.pos()
-            self.app.repaint()
+        self.end = end
+        self.app.repaint()
 
     def paint(self, image):
         if not self.begin:

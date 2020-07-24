@@ -1,3 +1,4 @@
+from PyQt5.QtCore import QPoint, QRect, Qt
 from PyQt5.QtGui import QPainter, QPen, QColor
 from math import sqrt
 import copy
@@ -5,7 +6,7 @@ import copy
 from States.IState import IState
 from States.Edit.IEditState import IEditState
 from Commands.EditCommand import EditCommand
-from Toolbars.RectToolbar import RectToolbar
+from Toolbars.ObjectToolbars.RectToolbar import RectToolbar
 from Toolbars.IToolbar import IToolbar
 
 
@@ -27,12 +28,24 @@ class EditRectState(IEditState, IState):
         if not self.editType:
             return
 
-        rect = copy.copy(self.selected.context.rect)
+        rect: QRect = copy.copy(self.selected.context.rect)
+        endPoint = event.pos()
 
         if self.editType == 'BOTTOMRIGHT':
-            rect.setBottomRight(event.pos())
+            if event.modifiers() & Qt.ShiftModifier:
+                diff = rect.bottomRight() - event.pos()
+                maxVal = min(diff.x(), diff.y())
+                endPoint = QPoint(maxVal, maxVal)
+
+            rect.setBottomRight(endPoint)
+
         elif self.editType == 'TOPLEFT':
-            rect.setTopLeft(event.pos())
+            if event.modifiers() & Qt.ShiftModifier:
+                diff = event.pos() - rect.bottomRight()
+                minVal = min(diff.x(), diff.y())
+                endPoint = QPoint(minVal, minVal)
+
+            rect.setTopLeft(endPoint)
 
         self.selected.context.setRect(rect)
         self.app.repaint()

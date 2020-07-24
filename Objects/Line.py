@@ -5,6 +5,8 @@ from math import sqrt
 from Objects.IObject import IObject
 from Context.ObjectData.LineContext import LineContext
 from Context.DrawData.LineDrawContext import LineDrawContext
+from States.Edit.EditLineState import EditLineState
+from States.Edit.IEditState import IEditState
 
 
 class Line(IObject):
@@ -54,3 +56,6 @@ class Line(IObject):
 
     def changeDraw(self, drawContext: LineDrawContext):
         self.context.setDraw(drawContext)
+
+    def getEditMode(self, app) -> IEditState:
+        return EditLineState(app, self)

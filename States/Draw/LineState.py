@@ -6,7 +6,7 @@ from States.IState import IState
 from Objects.Line import Line
 from Commands.Create.CreateLine import CreateLine
 from Context.ObjectData.LineContext import LineContext
-from Toolbars.LineToolbar import LineToolbar
+from Toolbars.ObjectToolbars.LineToolbar import LineToolbar
 
 
 class LineState(IState):

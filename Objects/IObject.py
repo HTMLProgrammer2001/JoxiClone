@@ -1,6 +1,8 @@
 from abc import abstractmethod
 from PyQt5.QtCore import QPoint
 
+from States.Edit.IEditState import IEditState
+
 
 class IObject:
     context = None
@@ -26,4 +28,8 @@ class IObject:
 
     @abstractmethod
     def moveBy(self, dx: int, dy: int):
+        pass
+
+    @abstractmethod
+    def getEditMode(self, app) -> IEditState:
         pass
