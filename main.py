@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication, QAction, QActionGroup, QDesktopWidget, QFileDialog, \
     QToolBar
-from PyQt5.QtGui import QImage, QPainter, QColor
+from PyQt5.QtGui import QImage, QPainter, QKeySequence
 from PyQt5.QtCore import Qt
 import sys
 from typing import List
@@ -27,8 +27,6 @@ class Main(QMainWindow):
         self.image = QImage(500, 500, QImage.Format_RGB32)
         self.image.fill(Qt.white)
 
-        self.brushSize = 3
-        self.brushColor = Qt.black
         self.state: IState = LineState(self)
 
         self.history = History.getInstance()
@@ -46,11 +44,7 @@ class Main(QMainWindow):
         # create menu
         menu = self.menuBar()
         fileMenu = menu.addMenu('File')
-        sizeMenu = menu.addMenu('Size')
-        brushMenu = menu.addMenu('Brush')
 
-        sizeGroup = QActionGroup(self)
-        colorGroup = QActionGroup(self)
         commandsGroup = QActionGroup(self)
 
         saveAction = QAction('Save', self)
@@ -73,48 +67,6 @@ class Main(QMainWindow):
         quitAction.triggered.connect(self.quit)
         fileMenu.addAction(quitAction)
 
-        threeAction = QAction('3px', self)
-        threeAction.setCheckable(True)
-        threeAction.setChecked(True)
-        threeAction.setProperty('size', 3)
-        threeAction.triggered.connect(self.changeSize)
-        sizeGroup.addAction(threeAction)
-
-        fiveAction = QAction('5px', self)
-        fiveAction.setCheckable(True)
-        fiveAction.triggered.connect(self.changeSize)
-        fiveAction.setProperty('size', 5)
-        sizeGroup.addAction(fiveAction)
-
-        sevenAction = QAction('7px', self)
-        sevenAction.setCheckable(True)
-        sevenAction.triggered.connect(self.changeSize)
-        sevenAction.setProperty('size', 7)
-        sizeGroup.addAction(sevenAction)
-
-        sizeMenu.addActions(sizeGroup.actions())
-
-        blackAction = QAction('Black', self)
-        blackAction.setCheckable(True)
-        blackAction.setChecked(True)
-        blackAction.setProperty('color', 'black')
-        blackAction.triggered.connect(self.changeColor)
-        colorGroup.addAction(blackAction)
-
-        greenAction = QAction('Green', self)
-        greenAction.setCheckable(True)
-        greenAction.setProperty('color', 'green')
-        greenAction.triggered.connect(self.changeColor)
-        colorGroup.addAction(greenAction)
-
-        redAction = QAction('Red', self)
-        redAction.setCheckable(True)
-        redAction.setProperty('color', 'red')
-        redAction.triggered.connect(self.changeColor)
-        colorGroup.addAction(redAction)
-
-        brushMenu.addActions(colorGroup.actions())
-
         LineAction = QAction('Line', self)
         LineAction.setCheckable(True)
         LineAction.setChecked(True)
@@ -135,6 +87,22 @@ class Main(QMainWindow):
         EditAction.setCheckable(True)
         EditAction.triggered.connect(lambda x: self.setState(MoveState(self)))
         commandsGroup.addAction(EditAction)
+
+        self.deleteAction = QAction('Delete', self)
+        self.deleteAction.setDisabled(True)
+        self.deleteAction.setShortcut('Delete')
+
+        self.copyAction = QAction('Copy', self)
+        self.copyAction.setDisabled(True)
+        self.copyAction.setShortcut(QKeySequence('Ctrl+C'))
+
+        self.pasteAction = QAction('Paste', self)
+        self.pasteAction.setDisabled(True)
+        self.pasteAction.setShortcut(QKeySequence('Ctrl+V'))
+
+        menu.addAction(self.deleteAction)
+        menu.addAction(self.copyAction)
+        menu.addAction(self.pasteAction)
 
         self.commandsToolbar = QToolBar('Commands')
         self.commandsToolbar.setMovable(False)
@@ -186,12 +154,6 @@ class Main(QMainWindow):
         fr.moveCenter(qr)
 
         self.move(fr.topLeft())
-
-    def changeSize(self):
-        self.brushSize = self.sender().property('size')
-
-    def changeColor(self):
-        self.brushColor = QColor(self.sender().property('color'))
 
     def quit(self):
         app.exit()

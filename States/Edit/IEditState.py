@@ -1,7 +1,5 @@
 from abc import abstractmethod
 
-from PyQt5.QtWidgets import QShortcut
-
 from Commands.EditCommand import EditCommand
 from Toolbars.IToolbar import IToolbar
 from Toolbars.ToolbarObserver import ToolbarObserver
@@ -26,8 +24,8 @@ class IEditState(IState, ToolbarObserver):
 
         self.app.setToolbar(toolbar)
 
-        self.deleteShortcut = QShortcut('Delete', self.app)
-        self.deleteShortcut.activated.connect(self.delete)
+        self.app.deleteAction.triggered.connect(self.delete)
+        self.app.deleteAction.setDisabled(False)
 
     def mouseUp(self, *args):
         if not self.editType:
@@ -49,6 +47,8 @@ class IEditState(IState, ToolbarObserver):
         self.curMemento = memento
 
     def delete(self):
+        print('Delete')
+
         if self.selected in self.app.objects:
             self.app.objects.remove(self.selected)
             self.app.repaint()

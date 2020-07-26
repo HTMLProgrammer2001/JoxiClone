@@ -1,6 +1,3 @@
-from abc import abstractmethod
-
-
 class IState:
     def __init__(self, app):
         self.app = app
