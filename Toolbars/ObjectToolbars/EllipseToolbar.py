@@ -1,6 +1,6 @@
 from Toolbars.IToolbar import IToolbar
 from Toolbars.IDrawPrimitiveToolbar import IDrawPrimitiveToolbar
-from Context.DrawData.EllipseDrawContext import EllipseDrawContext
+from Context.EllipseDrawContext import EllipseDrawContext
 
 
 class EllipseToolbar(IDrawPrimitiveToolbar, IToolbar):
@@ -8,8 +8,6 @@ class EllipseToolbar(IDrawPrimitiveToolbar, IToolbar):
         return EllipseDrawContext(self.fill, self.stroke, self.size)
 
     def setContext(self, context: EllipseDrawContext):
-        self.size = context.width
-        self.stroke = context.stroke
-        self.fill = context.fill
-
-        self.updateToolbar(False)
+        self.sizeComponent.setValue(context.width, notify=False)
+        self.strokeComponent.setValue(context.stroke, notify=False)
+        self.fillComponent.setValue(context.fill, notify=False)

@@ -32,9 +32,9 @@ class SizeComponent(IComponent):
 
         self.updateComponent()
 
-    def setValue(self, newValue):
+    def setValue(self, newValue, notify=True):
         self.val = newValue
-        self.changedValue(newValue)
+        self.changedValue(newValue, notify)
 
         self.updateComponent()
 

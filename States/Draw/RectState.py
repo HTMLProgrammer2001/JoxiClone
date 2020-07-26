@@ -2,11 +2,12 @@ from PyQt5.QtCore import QRect, QPoint
 from PyQt5.Qt import Qt
 from PyQt5.Qt import QKeyEvent
 
+from Context.RectDrawContext import RectDrawContext
 from States.IState import IState
 from Objects.Rect import Rect
 from Commands.Create.CreateRect import CreateRect
-from Context.ObjectData.RectContext import RectContext
 from Toolbars.ObjectToolbars.RectToolbar import RectToolbar
+from helpers import getBiggerDiff
 
 
 class RectState(IState):
@@ -25,9 +26,7 @@ class RectState(IState):
 
     def mouseUp(self, event):
         if self.isDrawing and self.end:
-            context = self.createContext()
-
-            command = CreateRect(self.app, context)
+            command = CreateRect(self.app, QRect(self.begin, self.end), self.createContext())
             command.execute()
 
             self.app.history.addCommand(command)
@@ -41,7 +40,7 @@ class RectState(IState):
 
         if event.modifiers() & Qt.ShiftModifier:
             # if shift then draw square with bigger size
-            if abs(event.pos().x() - self.begin.x()) > abs(event.pos().y() - self.begin.y()):
+            if getBiggerDiff(event.pos(), self.begin) == 'X':
                 end = QPoint(end.x(), end.x() - self.begin.x() + self.begin.y())
             else:
                 end = QPoint(end.y() - self.begin.y() + self.begin.x(), end.y())
@@ -60,11 +59,8 @@ class RectState(IState):
         if not self.begin:
             return
 
-        rect = Rect(self.createContext())
+        rect = Rect(QRect(self.begin, self.end), self.createContext())
         rect.draw(image)
 
-    def createContext(self) -> RectContext:
-        drawContext = self.app.contextToolbar.getContext()
-        context = RectContext(QRect(self.begin, self.end), drawContext)
-
-        return context
+    def createContext(self) -> RectDrawContext:
+        return self.app.contextToolbar.getContext()

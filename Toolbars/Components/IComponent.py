@@ -12,11 +12,11 @@ class IComponent:
         self.mediator = mediator
         self.drawUI()
 
-    def changedValue(self, newValue):
-        self.mediator.dispatch(self, newValue)
+    def changedValue(self, newValue, notify=True):
+        self.mediator.dispatch(self, newValue, notify)
 
     @abstractmethod
-    def setValue(self, newValue):
+    def setValue(self, newValue, notify=True):
         pass
 
     @abstractmethod

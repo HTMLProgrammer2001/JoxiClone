@@ -13,9 +13,10 @@ class History:
 
         return cls.instance
 
-    def addCommand(self, command):
+    def addCommand(self, command: ICommand):
         self.commands.append(command)
 
+        print(command.__class__)
         print('Histroy: ', len(self.commands))
 
     def removeCommand(self):

@@ -1,29 +1,30 @@
 from PyQt5.QtGui import QPainter, QPen, QColor
 from PyQt5.QtCore import QPoint, Qt
-from math import sqrt
-from copy import copy
 
+from Memento.EllipseMemento import EllipseMemento
 from States.IState import IState
 from States.Edit.IEditState import IEditState
 from Commands.EditCommand import EditCommand
 from Toolbars.IToolbar import IToolbar
 from Toolbars.ObjectToolbars.EllipseToolbar import EllipseToolbar
+from helpers import getDistance
 
 
 class EditEllipseState(IEditState, IState):
     editType = None
+    selected = None
+    curMemento: EllipseMemento = None
 
     def mouseDown(self, event):
-        context = self.selected.context
-        point = self.selected.context.center - QPoint(0, context.radiusY)
+        point = self.selected.getCenter() - QPoint(0, self.selected.getRadiusY())
 
-        if sqrt((event.pos().x() - point.x())**2 + (event.pos().y() - point.y())**2) <= 3:
+        if getDistance(point, event.pos()) <= 3:
             self.editType = 'TOP'
         else:
             self.editType = 'NO'
 
     def mouseUp(self, event):
-        command = EditCommand(self.selected, self.curContext, self.selected.context)
+        command = EditCommand(self.curMemento, self.selected.getMemento())
         command.execute()
 
         self.app.history.addCommand(command)
@@ -36,37 +37,30 @@ class EditEllipseState(IEditState, IState):
             return
 
         if self.editType == 'TOP':
-            radPoint = event.pos() - self.curContext.center
+            radPoint = event.pos() - self.curMemento.center
 
             if event.modifiers() & Qt.ShiftModifier:
-                self.selected.context.setRadiusX(max(radPoint.x(), radPoint.y()))
-                self.selected.context.setRadiusY(max(radPoint.y(), radPoint.x()))
+                self.selected.setRadiusX(max(radPoint.x(), radPoint.y()))
+                self.selected.setRadiusY(max(radPoint.y(), radPoint.x()))
             else:
-                self.selected.context.setRadiusX(radPoint.x())
-                self.selected.context.setRadiusY(radPoint.y())
+                self.selected.setRadiusX(radPoint.x())
+                self.selected.setRadiusY(radPoint.y())
 
         self.app.repaint()
 
     def paint(self, image):
-        center = self.selected.context.center
-        radiusY = self.selected.context.radiusY
+        center = self.selected.getCenter()
+        radiusY = self.selected.getRadiusY()
 
         qp = QPainter(image)
         qp.setPen(QPen(QColor('blue'), 1))
         qp.drawEllipse(center - QPoint(0, radiusY), 3, 3)
 
     def changeDraw(self, newDraw):
-        self.selected.context.setDraw(newDraw)
+        self.selected.setDrawContext(newDraw)
 
         self.execChange()
         self.app.repaint()
-
-    def execChange(self):
-        command = EditCommand(self.selected, self.curContext, self.selected.context)
-        command.execute()
-
-        self.app.history.addCommand(command)
-        self.curContext = copy(self.selected.context)
 
     def getToolbar(self) -> IToolbar:
         return EllipseToolbar()

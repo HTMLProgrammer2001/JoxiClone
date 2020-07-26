@@ -1,7 +1,7 @@
 from PyQt5.QtCore import pyqtSignal, QObject
 from PyQt5.QtGui import QColor
 
-from Context.DrawData.LineDrawContext import LineDrawContext
+from Context.LineDrawContext import LineDrawContext
 from Toolbars.Components.ColorComponent import ColorComponent
 from Toolbars.Components.IComponent import IComponent
 from Toolbars.Components.SizeComponent import SizeComponent
@@ -39,13 +39,14 @@ class LineToolbar(IToolbar, IMediator):
         return LineDrawContext(self.color, self.size)
 
     def setContext(self, context: LineDrawContext):
-        self.sizeComponent.setValue(context.width)
-        self.colorComponent.setValue(context.stroke)
+        self.sizeComponent.setValue(context.width, notify=False)
+        self.colorComponent.setValue(context.stroke, notify=False)
 
-    def dispatch(self, comp: IComponent, newValue):
+    def dispatch(self, comp: IComponent, newValue, notify=True):
         if comp == self.sizeComponent:
             self.size = newValue
         elif comp == self.colorComponent:
             self.color = newValue
 
-        self.notify()
+        if notify:
+            self.notify()

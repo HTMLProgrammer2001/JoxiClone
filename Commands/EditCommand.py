@@ -1,15 +1,13 @@
 from Commands.ICommand import ICommand
-from Objects.IObject import IObject
 
 
 class EditCommand(ICommand):
-    def __init__(self, object: IObject, prevContext, newContext):
-        self.object = object
-        self.prevContext = prevContext
-        self.newContext = newContext
+    def __init__(self, prevMemento, nextMemento):
+        self.prevMemento = prevMemento
+        self.nextMemento = nextMemento
 
     def execute(self):
-        self.object.setContext(self.newContext)
+        self.nextMemento.restore()
 
     def unexecute(self):
-        self.object.setContext(self.prevContext)
+        self.prevMemento.restore()

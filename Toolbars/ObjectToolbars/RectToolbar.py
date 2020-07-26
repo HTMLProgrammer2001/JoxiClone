@@ -1,6 +1,6 @@
 from Toolbars.IToolbar import IToolbar
 from Toolbars.IDrawPrimitiveToolbar import IDrawPrimitiveToolbar
-from Context.DrawData.RectDrawContext import RectDrawContext
+from Context.RectDrawContext import RectDrawContext
 
 
 class RectToolbar(IDrawPrimitiveToolbar, IToolbar):
@@ -8,8 +8,6 @@ class RectToolbar(IDrawPrimitiveToolbar, IToolbar):
         return RectDrawContext(self.fill, self.stroke, self.size)
 
     def setContext(self, context: RectDrawContext):
-        self.size = context.width
-        self.stroke = context.stroke
-        self.fill = context.fill
-
-        self.updateToolbar(False)
+        self.sizeComponent.setValue(context.width, notify=False)
+        self.strokeComponent.setValue(context.stroke, notify=False)
+        self.fillComponent.setValue(context.fill, notify=False)

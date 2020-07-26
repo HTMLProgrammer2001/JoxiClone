@@ -1,40 +1,53 @@
-from PyQt5.QtGui import QPainter, QPen, QColor
-from PyQt5.QtCore import QPoint
+from PyQt5.QtGui import QPainter, QPen
+from PyQt5.QtCore import QPoint, QRect
 
+from Context.RectDrawContext import RectDrawContext
+from Memento.RectMemento import RectMemento
 from Objects.IObject import IObject
-from Context.ObjectData.RectContext import RectContext
 from States.Edit.EditRectState import EditRectState
 from States.Edit.IEditState import IEditState
+from helpers import rectContain
 
 
 class Rect(IObject):
-    def __init__(self, context: RectContext):
-        self.context = context
+    rect: QRect = None
+
+    def __init__(self, rect: QRect, drawContext: RectDrawContext):
+        self.setDrawContext(drawContext)
+        self.setRect(rect)
 
     def draw(self, image):
         qp = QPainter(image)
 
-        qp.fillRect(self.context.rect, self.context.draw.fill)
-        qp.setPen(QPen(self.context.draw.stroke, self.context.draw.width))
-        qp.drawRect(self.context.rect)
+        qp.fillRect(self.rect, self.drawContext.fill)
+        qp.setPen(QPen(self.drawContext.stroke, self.drawContext.width))
+        qp.drawRect(self.rect)
 
     def contain(self, point: QPoint) -> bool:
-        rect = self.context.rect
-
-        return rect.left() < point.x() < rect.right() and rect.top() < point.y() < rect.bottom()
+        return rectContain(point, self.rect)
 
     def getPos(self) -> QPoint:
-        pos = self.context.rect.topLeft()
+        pos = self.rect.topLeft()
+
         return QPoint(pos.x(), pos.y())
 
     def moveTo(self, pos: QPoint):
-        self.context.rect.moveTo(pos)
+        self.rect.moveTo(pos)
 
     def moveBy(self, dx: int, dy: int):
-        topLeft = self.context.rect.topLeft()
+        topLeft = self.rect.topLeft()
         newPoint = QPoint(topLeft.x() + dx, topLeft.y() + dy)
 
-        self.context.rect.moveTopLeft(newPoint)
+        self.rect.moveTopLeft(newPoint)
 
     def getEditMode(self, app) -> IEditState:
         return EditRectState(app, self)
+
+    def setRect(self, rect: QRect):
+        self.rect = rect
+
+    def getRect(self) -> QRect:
+        return self.rect
+
+    def getMemento(self) -> RectMemento:
+        return RectMemento(self, self.getRect(), self.getDrawContext())

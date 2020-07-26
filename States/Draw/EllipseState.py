@@ -1,9 +1,9 @@
 from PyQt5.QtCore import Qt, QPoint
 
+from Context.EllipseDrawContext import EllipseDrawContext
 from States.IState import IState
 from Objects.Ellipse import Ellipse
 from Commands.Create.CreateEllipse import CreateEllipse
-from Context.ObjectData.EllipseContext import EllipseContext
 from Toolbars.ObjectToolbars.EllipseToolbar import EllipseToolbar
 
 
@@ -23,9 +23,10 @@ class EllipseState(IState):
 
     def mouseUp(self, event):
         if self.isDrawing and self.end:
-            context = self.createContext()
+            radX = abs(self.end.x() - self.begin.x())
+            radY = abs(self.end.y() - self.begin.y())
 
-            command = CreateEllipse(self.app, context)
+            command = CreateEllipse(self.app, self.begin, radX, radY, self.createContext())
             command.execute()
 
             self.app.history.addCommand(command)
@@ -59,14 +60,11 @@ class EllipseState(IState):
         if not self.begin:
             return
 
-        circle = Ellipse(self.createContext())
+        radX = abs(self.end.x() - self.begin.x())
+        radY = abs(self.end.y() - self.begin.y())
+
+        circle = Ellipse(self.begin, radX, radY, self.createContext())
         circle.draw(image)
 
-    def createContext(self) -> EllipseContext:
-        context = EllipseContext(self.begin)
-
-        context.setRadiusX(abs(self.end.x() - self.begin.x()))
-        context.setRadiusY(abs(self.end.y() - self.begin.y()))
-        context.setDraw(self.app.contextToolbar.getContext())
-
-        return context
+    def createContext(self) -> EllipseDrawContext:
+        return self.app.contextToolbar.getContext()

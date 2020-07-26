@@ -1,18 +1,26 @@
 from abc import abstractmethod
+from copy import copy
 from PyQt5.QtCore import QPoint
 
 from States.Edit.IEditState import IEditState
 
 
 class IObject:
-    context = None
+    drawContext = None
 
     @abstractmethod
     def draw(self, image):
         pass
 
-    def setContext(self, context):
-        self.context = context
+    @abstractmethod
+    def getMemento(self):
+        pass
+
+    def setDrawContext(self, context):
+        self.drawContext = context
+
+    def getDrawContext(self):
+        return copy(self.drawContext)
 
     @abstractmethod
     def contain(self, point: QPoint) -> bool:

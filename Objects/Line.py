@@ -1,61 +1,73 @@
+from copy import copy
+
 from PyQt5.QtGui import QPainter, QPen
 from PyQt5.QtCore import QPoint
-from math import sqrt
 
+from Memento.LineMemento import LineMemento
 from Objects.IObject import IObject
-from Context.ObjectData.LineContext import LineContext
-from Context.DrawData.LineDrawContext import LineDrawContext
+from Context.LineDrawContext import LineDrawContext
 from States.Edit.EditLineState import EditLineState
 from States.Edit.IEditState import IEditState
+from helpers import lineContain
 
 
 class Line(IObject):
-    def __init__(self, context: LineContext):
-        self.context = context
+    begin: QPoint = None
+    end: QPoint = None
+
+    def __init__(self, begin: QPoint, end: QPoint, drawContext: LineDrawContext):
+        self.setBegin(begin)
+        self.setEnd(end)
+        self.setDrawContext(drawContext)
 
     def draw(self, image):
         qp = QPainter(image)
-        qp.setPen(QPen(self.context.draw.stroke, self.context.draw.width))
-        qp.drawLine(self.context.begin, self.context.end)
+        qp.setPen(QPen(self.drawContext.stroke, self.drawContext.width))
+        qp.drawLine(self.getBegin(), self.getEnd())
 
     def contain(self, point: QPoint) -> bool:
-        begin = self.context.begin
-        end = self.context.end
-
-        distance = lambda point, point2: sqrt((point.x() - point2.x())**2 + (point.y() - point2.y())**2)
-        lineContain = lambda point: abs(distance(begin, point) + distance(end, point) - \
-                                        distance(begin, end)) < self.context.draw.width
-
-        return lineContain(point)
+        return lineContain(point, self.getBegin(), self.getEnd(), self.drawContext.width)
 
     def getPos(self) -> QPoint:
-        return QPoint(self.context.begin.x(), self.context.begin.y())
+        return QPoint(self.begin.x(), self.begin.y())
 
     def moveTo(self, pos: QPoint):
-        beginPoint = self.context.begin
-        endPoint = self.context.end
+        beginPoint = self.getBegin()
+        endPoint = self.getEnd()
 
         newEnd = QPoint(endPoint.x() + (pos.x() - beginPoint.x()), endPoint.y() + (pos.y() - beginPoint.y()))
 
-        self.context.setBegin(pos)
-        self.context.setEnd(newEnd)
+        self.setBegin(pos)
+        self.setEnd(newEnd)
 
     def moveBy(self, dx: int, dy: int):
-        beginPoint = self.context.begin
-        endPoint = self.context.end
+        beginPoint = self.getBegin()
+        endPoint = self.getEnd()
 
         beginPoint.setX(beginPoint.x() + dx)
         beginPoint.setY(beginPoint.y() + dy)
 
-        self.context.setBegin(beginPoint)
+        self.setBegin(beginPoint)
 
         endPoint.setX(endPoint.x() + dx)
         endPoint.setY(endPoint.y() + dy)
 
-        self.context.setEnd(endPoint)
-
-    def changeDraw(self, drawContext: LineDrawContext):
-        self.context.setDraw(drawContext)
+        self.setEnd(endPoint)
 
     def getEditMode(self, app) -> IEditState:
         return EditLineState(app, self)
+
+    def getBegin(self):
+        return copy(self.begin)
+
+    def getEnd(self):
+        return copy(self.end)
+
+    def setBegin(self, begin: QPoint):
+        self.begin = begin
+
+    def setEnd(self, end: QPoint):
+        self.end = end
+
+    def getMemento(self) -> LineMemento:
+        return LineMemento(self, self.getBegin(), self.getEnd(), self.getDrawContext())

@@ -2,11 +2,12 @@ from PyQt5.Qt import QKeyEvent
 from PyQt5.Qt import Qt
 from PyQt5.QtCore import QPoint
 
+from Context.LineDrawContext import LineDrawContext
 from States.IState import IState
 from Objects.Line import Line
 from Commands.Create.CreateLine import CreateLine
-from Context.ObjectData.LineContext import LineContext
 from Toolbars.ObjectToolbars.LineToolbar import LineToolbar
+from helpers import getBiggerDiff
 
 
 class LineState(IState):
@@ -27,7 +28,7 @@ class LineState(IState):
         if self.isDrawing and self.end:
             context = self.createContext()
 
-            command = CreateLine(self.app, context)
+            command = CreateLine(self.app, self.begin, self.end, context)
             command.execute()
 
             self.app.history.addCommand(command)
@@ -40,7 +41,7 @@ class LineState(IState):
     def mouseMove(self, event: QKeyEvent):
         if event.modifiers() == Qt.ShiftModifier:
 
-            if abs(event.pos().x() - self.begin.x()) > abs(event.pos().y() - self.begin.y()):
+            if getBiggerDiff(event.pos(), self.begin) == 'X':
                 self.end = QPoint(event.pos().x(), self.begin.y())
             else:
                 self.end = QPoint(self.begin.x(), event.pos().y())
@@ -54,10 +55,8 @@ class LineState(IState):
         if not self.begin:
             return
 
-        line = Line(self.createContext())
+        line = Line(self.begin, self.end, self.createContext())
         line.draw(image)
 
-    def createContext(self) -> LineContext:
-        context = LineContext(self.begin, self.end, self.app.contextToolbar.getContext())
-
-        return context
+    def createContext(self) -> LineDrawContext:
+        return self.app.contextToolbar.getContext()
