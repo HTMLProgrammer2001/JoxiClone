@@ -1,0 +1,2 @@
+class IContext:
+    pass

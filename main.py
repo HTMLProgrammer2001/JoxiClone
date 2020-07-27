@@ -7,18 +7,18 @@ from typing import List
 from pickle import dumps, loads
 import binascii
 
-from Commands.DeleteCommand import DeleteCommand
-from Commands.PasteCommand import PasteCommand
-from history import History
-from States.Draw.LineState import LineState
-from States.Draw.RectState import RectState
-from States.Draw.EllipseState import EllipseState
-from States.MoveState import MoveState
-from States.IState import IState
-from Objects.IObject import IObject
-from Commands.ClearCommand import ClearCommand
+from Classes.Commands.DeleteCommand import DeleteCommand
+from Classes.Commands.PasteCommand import PasteCommand
+from Classes.History import History
+from Classes.States.Draw.LineState import LineState
+from Classes.States.Draw.RectState import RectState
+from Classes.States.Draw.EllipseState import EllipseState
+from Classes.States.MoveState import MoveState
+from Intefaces.IState import IState
+from Intefaces.IObject import IObject
+from Classes.Commands.ClearCommand import ClearCommand
 
-from Toolbars.NoneToolbar import NoneToolbar
+from Classes.Toolbars.NoneToolbar import NoneToolbar
 
 
 class Main(QMainWindow):
