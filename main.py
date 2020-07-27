@@ -1,10 +1,14 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication, QAction, QActionGroup, QDesktopWidget, QFileDialog, \
     QToolBar
-from PyQt5.QtGui import QImage, QPainter, QKeySequence
+from PyQt5.QtGui import QImage, QPainter, QKeySequence, QClipboard
 from PyQt5.QtCore import Qt
 import sys
 from typing import List
+from pickle import dumps, loads
+import binascii
 
+from Commands.DeleteCommand import DeleteCommand
+from Commands.PasteCommand import PasteCommand
 from history import History
 from States.Draw.LineState import LineState
 from States.Draw.RectState import RectState
@@ -53,7 +57,7 @@ class Main(QMainWindow):
         fileMenu.addAction(saveAction)
 
         clearAction = QAction('Clear', self)
-        clearAction.setShortcut('Ctrl+C')
+        clearAction.setShortcut('Ctrl+F')
         clearAction.triggered.connect(self.clear)
         fileMenu.addAction(clearAction)
 
@@ -97,8 +101,8 @@ class Main(QMainWindow):
         self.copyAction.setShortcut(QKeySequence('Ctrl+C'))
 
         self.pasteAction = QAction('Paste', self)
-        self.pasteAction.setDisabled(True)
         self.pasteAction.setShortcut(QKeySequence('Ctrl+V'))
+        self.pasteAction.triggered.connect(self.paste)
 
         menu.addAction(self.deleteAction)
         menu.addAction(self.copyAction)
@@ -143,9 +147,50 @@ class Main(QMainWindow):
     def select(self, obj: IObject):
         self.setState(obj.getEditMode(self))
 
+        self.deleteAction.triggered.connect(lambda *args: self.delete(obj))
+        self.deleteAction.setDisabled(False)
+
+        self.copyAction.triggered.connect(lambda *args: self.copy(obj))
+        self.copyAction.setDisabled(False)
+
     def unSelect(self):
         self.setState(MoveState(self))
         self.repaint()
+
+        self.deleteAction.triggered.connect(lambda *args: None)
+        self.deleteAction.setDisabled(True)
+
+        self.copyAction.triggered.connect(lambda *args: None)
+        self.copyAction.setDisabled(True)
+
+    def delete(self, obj: IObject):
+        if obj in self.objects:
+            deleteCommand = DeleteCommand(self, obj)
+            deleteCommand.execute()
+
+            self.history.addCommand(deleteCommand)
+            self.repaint()
+
+    def copy(self, obj: IObject):
+        cb: QClipboard = QApplication.clipboard()
+        data: str = binascii.hexlify(dumps(obj)).decode('utf-8')
+
+        cb.setText(data, mode=cb.Clipboard)
+        print('Copy')
+
+    def paste(self):
+        try:
+            data = binascii.unhexlify(QApplication.clipboard().text())
+            obj = loads(data)
+
+            print('Paste')
+            command = PasteCommand(self, obj)
+            command.execute()
+
+            self.history.addCommand(command)
+            self.repaint()
+        except binascii.Error:
+            pass
 
     def center(self):
         fr = self.frameGeometry()

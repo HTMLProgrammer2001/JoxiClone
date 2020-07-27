@@ -24,9 +24,6 @@ class IEditState(IState, ToolbarObserver):
 
         self.app.setToolbar(toolbar)
 
-        self.app.deleteAction.triggered.connect(self.delete)
-        self.app.deleteAction.setDisabled(False)
-
     def mouseUp(self, *args):
         if not self.editType:
             return
@@ -45,13 +42,6 @@ class IEditState(IState, ToolbarObserver):
 
         self.app.history.addCommand(command)
         self.curMemento = memento
-
-    def delete(self):
-        print('Delete')
-
-        if self.selected in self.app.objects:
-            self.app.objects.remove(self.selected)
-            self.app.repaint()
 
     @abstractmethod
     def getToolbar(self) -> IToolbar:
