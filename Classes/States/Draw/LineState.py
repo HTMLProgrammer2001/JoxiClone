@@ -58,5 +58,5 @@ class LineState(IState):
         line = Line(self.begin, self.end, self.createContext())
         line.draw(image)
 
-    def createContext(self) -> LineDrawContext:
+    def createContext(self):
         return self.app.contextToolbar.getContext()

@@ -1,0 +1,7 @@
+from Classes.ObjectData.Arrow.ArrowDrawContext import ArrowDrawContext
+from Classes.Toolbars.ObjectToolbars.LineToolbar import LineToolbar
+
+
+class ArrowToolbar(LineToolbar):
+    def getContext(self):
+        return ArrowDrawContext(self.color, self.size)

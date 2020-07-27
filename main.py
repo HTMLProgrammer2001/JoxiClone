@@ -10,6 +10,7 @@ import binascii
 from Classes.Commands.DeleteCommand import DeleteCommand
 from Classes.Commands.PasteCommand import PasteCommand
 from Classes.History import History
+from Classes.States.Draw.ArrowState import ArrowState
 from Classes.States.Draw.LineState import LineState
 from Classes.States.Draw.RectState import RectState
 from Classes.States.Draw.EllipseState import EllipseState
@@ -86,6 +87,11 @@ class Main(QMainWindow):
         CircleAction.setCheckable(True)
         CircleAction.triggered.connect(lambda x: self.setState(EllipseState(self)))
         commandsGroup.addAction(CircleAction)
+
+        ArrowAction = QAction('Arrow', self)
+        ArrowAction.setCheckable(True)
+        ArrowAction.triggered.connect(lambda x: self.setState(ArrowState(self)))
+        commandsGroup.addAction(ArrowAction)
 
         EditAction = QAction('Edit', self)
         EditAction.setCheckable(True)
