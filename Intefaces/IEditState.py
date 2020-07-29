@@ -45,6 +45,12 @@ class IEditState(IState, ToolbarObserver):
         self.app.history.addCommand(command)
         self.curMemento = memento
 
+    def changeDraw(self, newDraw):
+        self.selected.setDrawContext(newDraw)
+
+        self.execChange()
+        self.app.repaint()
+
     @abstractmethod
     def getToolbar(self) -> IToolbar:
         pass

@@ -1,7 +1,7 @@
 from typing import List
 
 from PyQt5.QtCore import QPoint, Qt
-from PyQt5.QtGui import QPolygon, QMouseEvent
+from PyQt5.QtGui import QMouseEvent
 
 from Classes.Commands.Create.CreatePen import CreatePen
 from Classes.ObjectData.Pen.Pen import Pen
@@ -17,6 +17,7 @@ class PenState(IState):
 
     def __init__(self, app):
         self.app = app
+        self.points = []
 
         self.app.setToolbar(PenToolbar())
 
@@ -44,10 +45,8 @@ class PenState(IState):
         self.app.repaint()
 
     def paint(self, image):
-        if len(self.points) <= 1:
+        if len(self.points) <= 1 or not self.curPos:
             return
-
-        print(self.curPos)
 
         pen = Pen([*self.points, self.curPos], self.createContext())
         pen.draw(image)

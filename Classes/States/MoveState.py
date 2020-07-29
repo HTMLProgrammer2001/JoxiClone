@@ -27,6 +27,8 @@ class MoveState(IState):
 
         for obj in reversed(self.app.objects):
             if obj.contain(event.pos()):
+                print(self.selected.__class__)
+
                 self.selected = obj
                 self.lastPosition = event.pos()
                 self.startPosition = obj.getPos()

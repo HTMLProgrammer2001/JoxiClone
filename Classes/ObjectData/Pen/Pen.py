@@ -5,6 +5,7 @@ from PyQt5.QtGui import QPainter, QPen, QPolygon, QColor
 from PyQt5.QtCore import QPoint, Qt
 
 from Classes.ObjectData.Pen.PenMemento import PenMemento
+from Classes.States.Edit.EditPenState import EditPenState
 from Intefaces.IEditState import IEditState
 from Intefaces.IObject import IObject
 
@@ -17,8 +18,6 @@ class Pen(IObject):
         self.setDrawContext(drawContext)
 
     def draw(self, image):
-        print(self.points)
-
         qp = QPainter(image)
 
         qp.setPen(QPen(self.drawContext.stroke, self.drawContext.width))
@@ -29,7 +28,7 @@ class Pen(IObject):
         qp.drawPolygon(QPolygon(self.points))
 
     def contain(self, point: QPoint) -> bool:
-        return QPolygon(self.getPoints()).contains(point)
+        return QPolygon(self.getPoints()).containsPoint(point, Qt.OddEvenFill)
 
     def getPos(self) -> QPoint:
         return self.points[0]
@@ -43,7 +42,7 @@ class Pen(IObject):
             point.setY(point.y() + dy)
 
     def getEditMode(self, app) -> IEditState:
-        pass
+        return EditPenState(app, self)
 
     def getPoints(self) -> List[QPoint]:
         return copy(self.points)

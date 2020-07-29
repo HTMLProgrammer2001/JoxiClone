@@ -1,29 +1,49 @@
-from PyQt5.QtGui import QPainter, QPen, QColor
+from typing import List, Union
+from PyQt5.QtCore import QPoint, Qt
+from PyQt5.QtGui import QPainter, QPen, QColor, QMouseEvent
 
 from Classes.ObjectData.Pen.PenMemento import PenMemento
+from Classes.Toolbars.ObjectToolbars.PenToolbar import PenToolbar
 from Intefaces.IEditState import IEditState
+from Intefaces.IToolbar import IToolbar
 from helpers import getDistance
 
 
 class EditPenState(IEditState):
     selected = None
     curMemento: PenMemento = None
+    editType: Union[str, QPoint] = None
 
-    def mouseDown(self, event):
+    def mouseDown(self, event: QMouseEvent):
         pos = event.pos()
-        polygon = self.selected.polygon
+        points: List[QPoint] = self.selected.points
 
-        for i in range(0, len(polygon)):
-            if getDistance(pos, polygon.point(i)) <= 3:
-                self.editType = i
+        for point in points:
+            if getDistance(pos, point) <= 3:
+                if event.button() == Qt.RightButton:
+                    self.selected.points.remove(point)
+                else:
+                    self.editType = point
                 break
         else:
             self.editType = 'NO'
+
+    def mouseMove(self, event):
+        if not self.editType:
+            return
+
+        self.editType.setX(event.pos().x())
+        self.editType.setY(event.pos().y())
+
+        self.app.repaint()
+
+    def getToolbar(self) -> IToolbar:
+        return PenToolbar()
 
     def paint(self, image):
         qp = QPainter(image)
 
         qp.setPen(QPen(QColor('blue'), 1))
 
-        for index in range(0, len(self.selected.polygon)):
-            qp.drawEllipse(self.selected.polygon.point(index), 3, 3)
+        for point in self.selected.points:
+            qp.drawEllipse(point, 3, 3)

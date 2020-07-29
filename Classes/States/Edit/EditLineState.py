@@ -6,7 +6,6 @@ from PyQt5.Qt import Qt
 from Classes.ObjectData.Line.LineMemento import LineMemento
 from Intefaces.IState import IState
 from Intefaces.IEditState import IEditState
-from Classes.ObjectData.Line.LineDrawContext import LineDrawContext
 from Classes.Toolbars.ObjectToolbars.LineToolbar import LineToolbar
 from Intefaces.IToolbar import IToolbar
 from helpers import getDistance, getBiggerDiff
@@ -69,12 +68,6 @@ class EditLineState(IEditState, IState):
 
         qp.drawEllipse(self.selected.getBegin(), 3, 3)
         qp.drawEllipse(self.selected.getEnd(), 3, 3)
-
-    def changeDraw(self, newDraw: LineDrawContext):
-        self.selected.setDrawContext(newDraw)
-
-        self.execChange()
-        self.app.repaint()
 
     def getToolbar(self) -> IToolbar:
         return LineToolbar()

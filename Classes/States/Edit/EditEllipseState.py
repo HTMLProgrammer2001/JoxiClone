@@ -56,11 +56,5 @@ class EditEllipseState(IEditState, IState):
         qp.setPen(QPen(QColor('blue'), 1))
         qp.drawEllipse(center - QPoint(0, radiusY), 3, 3)
 
-    def changeDraw(self, newDraw):
-        self.selected.setDrawContext(newDraw)
-
-        self.execChange()
-        self.app.repaint()
-
     def getToolbar(self) -> IToolbar:
         return EllipseToolbar()

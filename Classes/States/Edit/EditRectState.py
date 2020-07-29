@@ -57,11 +57,5 @@ class EditRectState(IEditState, IState):
         qp.drawEllipse(self.selected.rect.bottomRight(), 3, 3)
         qp.drawEllipse(self.selected.rect.topLeft(), 3, 3)
 
-    def changeDraw(self, newDraw):
-        self.selected.setDrawContext(newDraw)
-
-        self.execChange()
-        self.app.repaint()
-
     def getToolbar(self) -> IToolbar:
         return RectToolbar()
