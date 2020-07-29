@@ -12,6 +12,7 @@ from Classes.Commands.PasteCommand import PasteCommand
 from Classes.History import History
 from Classes.States.Draw.ArrowState import ArrowState
 from Classes.States.Draw.LineState import LineState
+from Classes.States.Draw.PencilState import PencilState
 from Classes.States.Draw.RectState import RectState
 from Classes.States.Draw.EllipseState import EllipseState
 from Classes.States.Draw.PenState import PenState
@@ -104,6 +105,11 @@ class Main(QMainWindow):
         PenAction.setCheckable(True)
         PenAction.triggered.connect(lambda x: self.setState(PenState(self)))
         commandsGroup.addAction(PenAction)
+
+        PencilAction = QAction('Pencil', self)
+        PencilAction.setCheckable(True)
+        PencilAction.triggered.connect(lambda x: self.setState(PencilState(self)))
+        commandsGroup.addAction(PencilAction)
 
         EditAction = QAction('Edit', self)
         EditAction.setCheckable(True)
