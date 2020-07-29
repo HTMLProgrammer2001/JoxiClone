@@ -47,6 +47,8 @@ class PenState(IState):
         if len(self.points) <= 1:
             return
 
+        print(self.curPos)
+
         pen = Pen([*self.points, self.curPos], self.createContext())
         pen.draw(image)
 

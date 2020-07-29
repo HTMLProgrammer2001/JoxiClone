@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication, QAction, QActionGroup, QDesktopWidget, QFileDialog, \
-    QToolBar, QWidget
-from PyQt5.QtGui import QImage, QPainter, QKeySequence, QClipboard
+    QToolBar
+from PyQt5.QtGui import QImage, QKeySequence, QClipboard
 from PyQt5.QtCore import Qt
 import sys
 from typing import List
@@ -32,8 +32,6 @@ class Main(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setMouseTracking(True)
-
         self.image = QImage(350, 380, QImage.Format_RGB32)
         self.image.fill(Qt.white)
 
@@ -50,7 +48,7 @@ class Main(QMainWindow):
         self.resize(500, 500)
         self.show()
 
-        self.centralWidget = PaintWidget(self.image, self)
+        self.centralWidget = PaintWidget(self)
         self.setCentralWidget(self.centralWidget)
 
         self.setWindowTitle('Paint')
@@ -224,15 +222,6 @@ class Main(QMainWindow):
     def quit(self):
         app.exit()
 
-    def mousePressEvent(self, event):
-        self.state.mouseDown(event)
-
-    def mouseReleaseEvent(self, event):
-        self.state.mouseUp(event)
-
-    def mouseMoveEvent(self, event):
-        self.state.mouseMove(event)
-
     def paintEvent(self, *args, **kwargs):
         self.image.fill(Qt.white)
 
@@ -240,10 +229,6 @@ class Main(QMainWindow):
             obj.draw(self.image)
 
         self.state.paint(self.image)
-
-    def resizeEvent(self, event):
-        self.image = QImage(self.width(), self.height(), QImage.Format_RGB32)
-        self.repaint()
 
 
 app = QApplication(sys.argv)

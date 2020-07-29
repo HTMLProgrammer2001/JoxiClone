@@ -17,7 +17,7 @@ class Pen(IObject):
         self.setDrawContext(drawContext)
 
     def draw(self, image):
-        print('Draw')
+        print(self.points)
 
         qp = QPainter(image)
 
@@ -38,7 +38,9 @@ class Pen(IObject):
         pass
 
     def moveBy(self, dx: int, dy: int):
-        pass
+        for point in self.points:
+            point.setX(point.x() + dx)
+            point.setY(point.y() + dy)
 
     def getEditMode(self, app) -> IEditState:
         pass
