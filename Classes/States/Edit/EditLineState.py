@@ -40,7 +40,7 @@ class EditLineState(IEditState, IState):
             # Shift pressed
             if event.modifiers() == Qt.ShiftModifier:
                 # Parallel to x axis
-                if getBiggerDiff(begin, event.pos()):
+                if getBiggerDiff(begin, event.pos()) == 'X':
                     newPoint = QPoint(event.pos().x(), end.y())
                 else:
                     # Parallel to Y axis

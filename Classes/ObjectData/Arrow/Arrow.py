@@ -34,7 +34,10 @@ class Arrow(Line):
         diff = self.getEnd() - self.getBegin()
 
         # calculate angle between vectors
-        angle = math.acos(diff.x()/getDistance(diff, QPoint(0, 0))) - math.pi/2
+        try:
+            angle = math.acos(diff.x()/getDistance(diff, QPoint(0, 0))) - math.pi/2
+        except ZeroDivisionError:
+            angle = 0
 
         # set coord system center to end
         qp.translate(self.getEnd())

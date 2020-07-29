@@ -31,12 +31,15 @@ class EllipseState(IState):
 
             self.app.history.addCommand(command)
 
-            self.isDrawing = False
+        self.isDrawing = False
 
-            self.begin = None
-            self.end = None
+        self.begin = None
+        self.end = None
 
     def mouseMove(self, event):
+        if not self.begin or not self.isDrawing:
+            return
+
         end = event.pos()
 
         if event.modifiers() & Qt.ShiftModifier:

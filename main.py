@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication, QAction, QActionGroup, QDesktopWidget, QFileDialog, \
-    QToolBar
+    QToolBar, QWidget
 from PyQt5.QtGui import QImage, QPainter, QKeySequence, QClipboard
 from PyQt5.QtCore import Qt
 import sys
@@ -14,23 +14,31 @@ from Classes.States.Draw.ArrowState import ArrowState
 from Classes.States.Draw.LineState import LineState
 from Classes.States.Draw.RectState import RectState
 from Classes.States.Draw.EllipseState import EllipseState
+from Classes.States.Draw.PenState import PenState
 from Classes.States.MoveState import MoveState
 from Intefaces.IState import IState
 from Intefaces.IObject import IObject
 from Classes.Commands.ClearCommand import ClearCommand
 
+from PaintWidget import PaintWidget
+
 from Classes.Toolbars.NoneToolbar import NoneToolbar
 
 
 class Main(QMainWindow):
+    contextToolbar = None
+    centralWidget = None
+
     def __init__(self):
         super().__init__()
 
+        self.setMouseTracking(True)
+
+        self.image = QImage(350, 380, QImage.Format_RGB32)
+        self.image.fill(Qt.white)
+
         self.center()
         self.setupUI()
-
-        self.image = QImage(500, 500, QImage.Format_RGB32)
-        self.image.fill(Qt.white)
 
         self.state: IState = LineState(self)
 
@@ -42,9 +50,10 @@ class Main(QMainWindow):
         self.resize(500, 500)
         self.show()
 
-        self.setWindowTitle('Paint')
+        self.centralWidget = PaintWidget(self.image, self)
+        self.setCentralWidget(self.centralWidget)
 
-        toolbar = self.addToolBar('Context')
+        self.setWindowTitle('Paint')
 
         # create menu
         menu = self.menuBar()
@@ -93,6 +102,11 @@ class Main(QMainWindow):
         ArrowAction.triggered.connect(lambda x: self.setState(ArrowState(self)))
         commandsGroup.addAction(ArrowAction)
 
+        PenAction = QAction('Pen', self)
+        PenAction.setCheckable(True)
+        PenAction.triggered.connect(lambda x: self.setState(PenState(self)))
+        commandsGroup.addAction(PenAction)
+
         EditAction = QAction('Edit', self)
         EditAction.setCheckable(True)
         EditAction.triggered.connect(lambda x: self.setState(MoveState(self)))
@@ -118,7 +132,7 @@ class Main(QMainWindow):
         self.commandsToolbar.setMovable(False)
         self.commandsToolbar.addActions(commandsGroup.actions())
 
-        self.contextToolbar = NoneToolbar('Context')
+        self.setToolbar(NoneToolbar('Context'))
         self.contextToolbar.setMovable(False)
         self.contextToolbar.destroy()
 
@@ -132,8 +146,9 @@ class Main(QMainWindow):
         self.repaint()
 
     def setToolbar(self, toolbar):
-        self.contextToolbar.destroy()
-        self.contextToolbar.hide()
+        if self.contextToolbar:
+            self.contextToolbar.destroy()
+            self.contextToolbar.hide()
 
         self.contextToolbar = toolbar
 
@@ -225,9 +240,6 @@ class Main(QMainWindow):
             obj.draw(self.image)
 
         self.state.paint(self.image)
-
-        screenQP = QPainter(self)
-        screenQP.drawImage(self.rect(), self.image, self.image.rect())
 
     def resizeEvent(self, event):
         self.image = QImage(self.width(), self.height(), QImage.Format_RGB32)

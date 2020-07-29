@@ -34,6 +34,8 @@ class IEditState(IState, ToolbarObserver):
 
         self.execChange()
 
+        self.editType = None
+
     def execChange(self):
         memento = self.selected.getMemento()
 

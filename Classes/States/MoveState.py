@@ -1,6 +1,7 @@
 from PyQt5.QtCore import QPoint
 from typing import Optional
 
+from Classes.Toolbars.NoneToolbar import NoneToolbar
 from Intefaces.IState import IState
 from Intefaces.IObject import IObject
 from Classes.Commands.MoveCommand import MoveCommand
@@ -12,6 +13,11 @@ class MoveState(IState):
     startPosition: Optional[QPoint] = None
 
     isMoved: bool = False
+
+    def __init__(self, app):
+        super().__init__(app)
+
+        self.app.setToolbar(NoneToolbar())
 
     def paint(self, image):
         pass
@@ -41,6 +47,8 @@ class MoveState(IState):
 
         command = MoveCommand(self.selected, self.startPosition, self.selected.getPos())
         self.app.history.addCommand(command)
+
+        self.selected = None
 
     def mouseMove(self, event):
         if self.selected:

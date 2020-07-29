@@ -24,9 +24,9 @@ class IDrawPrimitiveToolbar(IToolbar, IMediator):
     fill = QColor('red')
 
     def setupUI(self):
-        self.sizeComponent = SizeComponent(self, self.size)
-        self.strokeComponent = ColorComponent(self, self.stroke)
-        self.fillComponent = ColorComponent(self, self.fill)
+        self.sizeComponent = SizeComponent(self, 'Stroke width: ', self.size)
+        self.strokeComponent = ColorComponent(self, 'Stroke color: ', self.stroke)
+        self.fillComponent = ColorComponent(self, 'Fill color: ', self.fill)
 
     def dispatch(self, comp: IComponent, newValue, notify=True):
         if comp == self.sizeComponent:

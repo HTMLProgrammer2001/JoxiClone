@@ -6,9 +6,10 @@ from Intefaces.IMediator import IMediator
 
 
 class SizeComponent(IComponent):
-    def __init__(self, mediator: IMediator, default=10, min=0, max=50):
+    def __init__(self, mediator: IMediator, text: str = 'Size', default=10, min=0, max=50):
         self.min = min
         self.max = max
+        self.text = text
         self.val = default
 
         super().__init__(mediator)
@@ -25,7 +26,7 @@ class SizeComponent(IComponent):
 
         self.sizeLabel = QLabel()
 
-        self.mediator.addWidget(QLabel('Stroke width: '))
+        self.mediator.addWidget(QLabel(self.text))
         self.mediator.addWidget(self.sizeSlider)
         self.mediator.addWidget(self.sizeLabel)
         self.mediator.addSeparator()

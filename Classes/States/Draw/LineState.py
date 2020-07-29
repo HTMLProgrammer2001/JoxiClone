@@ -33,12 +33,15 @@ class LineState(IState):
 
             self.app.history.addCommand(command)
 
-            self.isDrawing = False
+        self.isDrawing = False
 
-            self.begin = None
-            self.end = None
+        self.begin = None
+        self.end = None
 
     def mouseMove(self, event: QKeyEvent):
+        if not self.begin or not self.isDrawing:
+            return
+
         if event.modifiers() == Qt.ShiftModifier:
 
             if getBiggerDiff(event.pos(), self.begin) == 'X':

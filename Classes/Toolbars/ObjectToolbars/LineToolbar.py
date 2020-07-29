@@ -26,10 +26,12 @@ class LineToolbar(IToolbar, IMediator):
         self.addColorPicker()
 
     def addSizeSlider(self):
-        self.sizeComponent = SizeComponent(self, default=self.size)
+        self.sizeComponent = SizeComponent(self, 'Stroke size: ', default=self.size)
 
     def addColorPicker(self):
-        self.colorComponent = ColorComponent(self, default=self.color)
+        self.colorComponent = ColorComponent(
+            self, 'Stroke color: ', default=self.color, transparently=False
+        )
 
     def changeSize(self, val):
         self.size = val

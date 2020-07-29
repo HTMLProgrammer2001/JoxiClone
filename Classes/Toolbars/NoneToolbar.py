@@ -4,7 +4,7 @@ from Intefaces.IToolbar import IToolbar
 
 
 class NoneToolbar(IToolbar):
-    def __init__(self, name='Default'):
+    def __init__(self, name='Context'):
         super().__init__(name)
 
         self.setupUI()
