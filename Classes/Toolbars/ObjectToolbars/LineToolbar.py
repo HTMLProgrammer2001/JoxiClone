@@ -8,4 +8,4 @@ class LineToolbar(IDrawStrokableToolbar):
 
     def setContext(self, context):
         self.strokeComponent.setValue(context.stroke, notify=False)
-        self.sizeComponent.setValue(context.size, notify=False)
+        self.sizeComponent.setValue(context.width, notify=False)

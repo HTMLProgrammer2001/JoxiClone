@@ -14,8 +14,8 @@ class EditRectState(IEditState, IState):
     curMemento: RectMemento = None
 
     def mouseDown(self, event):
-        botRight = self.selected.rect.bottomRight()
-        topLeft = self.selected.rect.topLeft()
+        botRight = self.selected.getRect().bottomRight()
+        topLeft = self.selected.getRect().topLeft()
 
         if getDistance(event.pos(), botRight) <= 3:
             self.editType = 'BOTTOMRIGHT'

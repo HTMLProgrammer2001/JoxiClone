@@ -21,7 +21,7 @@ class SizeComponent(IComponent):
         self.sizeSlider.setMaximum(self.max)
         self.sizeSlider.setMinimum(self.min)
         self.sizeSlider.setValue(self.val)
-        self.sizeSlider.valueChanged[int].connect(self.setValue)
+        self.sizeSlider.valueChanged[int].connect(lambda x: self.setValue(x, False))
         self.sizeSlider.sliderReleased.connect(lambda: self.changedValue(self.val))
 
         self.sizeLabel = QLabel()

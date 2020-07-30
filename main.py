@@ -7,6 +7,7 @@ from typing import List
 from pickle import dumps, loads
 import binascii
 
+from Classes.Commands.Create.CreateImage import CreateImage
 from Classes.Commands.DeleteCommand import DeleteCommand
 from Classes.Commands.PasteCommand import PasteCommand
 from Classes.History import History
@@ -110,6 +111,11 @@ class Main(QMainWindow):
         PencilAction.setCheckable(True)
         PencilAction.triggered.connect(lambda x: self.setState(PencilState(self)))
         commandsGroup.addAction(PencilAction)
+
+        ImageAction = QAction('Image', self)
+        ImageAction.setCheckable(True)
+        ImageAction.triggered.connect(lambda x: self.addImage())
+        commandsGroup.addAction(ImageAction)
 
         EditAction = QAction('Edit', self)
         EditAction.setCheckable(True)
@@ -216,6 +222,15 @@ class Main(QMainWindow):
             self.repaint()
         except binascii.Error:
             pass
+
+    def addImage(self):
+        path, f = QFileDialog.getOpenFileName()
+
+        if path:
+            imageComm = CreateImage(self, path)
+            imageComm.execute()
+
+            self.history.addCommand(imageComm)
 
     def center(self):
         fr = self.frameGeometry()
