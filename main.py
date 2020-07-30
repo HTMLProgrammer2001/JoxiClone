@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication, QAction, QActionGroup, QDesktopWidget, QFileDialog, \
     QToolBar
-from PyQt5.QtGui import QImage, QKeySequence, QClipboard
+from PyQt5.QtGui import QImage, QKeySequence, QClipboard, QPixmap, QPainter
 from PyQt5.QtCore import Qt
 import sys
 from typing import List
@@ -17,6 +17,7 @@ from Classes.States.Draw.PencilState import PencilState
 from Classes.States.Draw.RectState import RectState
 from Classes.States.Draw.EllipseState import EllipseState
 from Classes.States.Draw.PenState import PenState
+from Classes.States.Draw.TextState import TextState
 from Classes.States.MoveState import MoveState
 from Intefaces.IState import IState
 from Intefaces.IObject import IObject
@@ -31,8 +32,10 @@ class Main(QMainWindow):
     contextToolbar = None
     centralWidget = None
 
-    def __init__(self):
+    def __init__(self, pix: QPixmap = None):
         super().__init__()
+
+        self.defaultPix = pix
 
         self.image = QImage(350, 380, QImage.Format_RGB32)
         self.image.fill(Qt.white)
@@ -48,9 +51,13 @@ class Main(QMainWindow):
     def setupUI(self):
         # setting window
         self.resize(500, 500)
-        self.show()
+        self.showMaximized()
 
         self.centralWidget = PaintWidget(self)
+
+        if self.defaultPix:
+            self.centralWidget.resize(self.defaultPix.size())
+
         self.setCentralWidget(self.centralWidget)
 
         self.setWindowTitle('Paint')
@@ -116,6 +123,11 @@ class Main(QMainWindow):
         ImageAction.setCheckable(True)
         ImageAction.triggered.connect(lambda x: self.addImage())
         commandsGroup.addAction(ImageAction)
+
+        TextAction = QAction('Text', self)
+        TextAction.setCheckable(True)
+        TextAction.triggered.connect(lambda x: self.setState(TextState(self)))
+        commandsGroup.addAction(TextAction)
 
         EditAction = QAction('Edit', self)
         EditAction.setCheckable(True)
@@ -246,13 +258,18 @@ class Main(QMainWindow):
     def paintEvent(self, *args, **kwargs):
         self.image.fill(Qt.white)
 
+        if self.defaultPix:
+            qp = QPainter(self.image)
+            qp.drawPixmap(self.defaultPix.rect(), self.defaultPix)
+
         for obj in self.objects:
             obj.draw(self.image)
 
         self.state.paint(self.image)
 
 
-app = QApplication(sys.argv)
-main = Main()
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    main = Main()
 
-sys.exit(app.exec_())
+    sys.exit(app.exec_())
