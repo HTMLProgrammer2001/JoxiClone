@@ -36,10 +36,17 @@ class MainW(QMainWindow):
         self.repaint()
 
     def selected(self):
-        print(1)
+        begin = self.begin
+        end = self.end
+
+        if begin.x() > end.x():
+            begin, end = QPoint(end.x(), begin.y()), QPoint(begin.x(), end.y())
+
+        if begin.y() > end.y():
+            begin, end = QPoint(begin.x(), end.y()), QPoint(end.x(), begin.y())
 
         self.close()
-        Main(self.screenShot.copy(QRect(self.begin, self.end)))
+        Main(self.screenShot.copy(QRect(begin, end)))
 
     def setupUI(self):
         self.resize(300, 300)
@@ -54,6 +61,12 @@ class MainW(QMainWindow):
 
         begin = self.begin
         end = self.end
+
+        if begin.x() > end.x():
+            begin, end = QPoint(end.x(), begin.y()), QPoint(begin.x(), end.y())
+
+        if begin.y() > end.y():
+            begin, end = QPoint(begin.x(), end.y()), QPoint(end.x(), begin.y())
 
         pixCopy = self.screenShot.copy(QRect(begin, end))
         qp.drawPixmap(QRect(begin, end), pixCopy)

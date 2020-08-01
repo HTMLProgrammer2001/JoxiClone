@@ -51,7 +51,7 @@ class Main(QMainWindow):
     def setupUI(self):
         # setting window
         self.resize(500, 500)
-        self.showMaximized()
+        self.show()
 
         self.centralWidget = PaintWidget(self)
 
