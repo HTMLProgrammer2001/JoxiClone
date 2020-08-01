@@ -2,7 +2,6 @@ from PyQt5.Qt import QKeyEvent
 from PyQt5.Qt import Qt
 from PyQt5.QtCore import QPoint
 
-from Classes.ObjectData.Line.LineDrawContext import LineDrawContext
 from Intefaces.IState import IState
 from Classes.ObjectData.Line.Line import Line
 from Classes.Commands.Create.CreateLine import CreateLine

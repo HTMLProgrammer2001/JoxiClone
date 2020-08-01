@@ -39,11 +39,11 @@ class EditLineState(IEditState, IState):
             # Shift pressed
             if event.modifiers() == Qt.ShiftModifier:
                 # Parallel to x axis
-                if getBiggerDiff(begin, event.pos()) == 'X':
-                    newPoint = QPoint(event.pos().x(), end.y())
+                if getBiggerDiff(end, newPoint) == 'X':
+                    newPoint = QPoint(newPoint.x(), end.y())
                 else:
                     # Parallel to Y axis
-                    newPoint = QPoint(end.x(), event.pos().y())
+                    newPoint = QPoint(end.x(), newPoint.y())
 
             self.selected.setBegin(newPoint)
 
@@ -51,11 +51,11 @@ class EditLineState(IEditState, IState):
             # Shift pressed
             if event.modifiers() == Qt.ShiftModifier:
                 # Parallel to x axis
-                if getBiggerDiff(end, event.pos()) == 'X':
-                    newPoint = QPoint(event.pos().x(), begin.y())
+                if getBiggerDiff(begin, newPoint) == 'X':
+                    newPoint = QPoint(newPoint.x(), begin.y())
                 else:
                     # Parallel to y axis
-                    newPoint = QPoint(begin.x(), event.pos().y())
+                    newPoint = QPoint(begin.x(), newPoint.y())
 
             self.selected.setEnd(newPoint)
 
