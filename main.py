@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication, QAction, QActionGroup, QDesktopWidget, QFileDialog, \
-    QToolBar
+    QToolBar, QWidget, QHBoxLayout, QScrollArea
 from PyQt5.QtGui import QImage, QKeySequence, QClipboard, QPixmap, QPainter
 from PyQt5.QtCore import Qt
 import sys
@@ -30,7 +30,6 @@ from Classes.Toolbars.NoneToolbar import NoneToolbar
 
 class Main(QMainWindow):
     contextToolbar = None
-    centralWidget = None
 
     def __init__(self, pix: QPixmap = None):
         super().__init__()
@@ -50,15 +49,24 @@ class Main(QMainWindow):
 
     def setupUI(self):
         # setting window
-        self.resize(500, 500)
-        self.show()
+        self.showMaximized()
 
-        self.centralWidget = PaintWidget(self)
+        centWidget = QWidget(self)
+        paintWidget = PaintWidget(self, self)
+
+        vbox = QHBoxLayout()
+
+        vbox.addStretch(1)
 
         if self.defaultPix:
-            self.centralWidget.resize(self.defaultPix.size())
+            paintWidget.setFixedSize(self.defaultPix.size())
 
-        self.setCentralWidget(self.centralWidget)
+        vbox.addWidget(paintWidget)
+        vbox.addStretch(1)
+
+        centWidget.setLayout(vbox)
+
+        self.setCentralWidget(centWidget)
 
         self.setWindowTitle('Paint')
 
@@ -264,6 +272,8 @@ class Main(QMainWindow):
         if self.defaultPix:
             qp = QPainter(self.image)
             qp.drawPixmap(self.defaultPix.rect(), self.defaultPix)
+
+            del qp
 
         for obj in self.objects:
             obj.draw(self.image)

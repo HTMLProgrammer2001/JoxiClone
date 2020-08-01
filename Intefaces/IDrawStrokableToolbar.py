@@ -23,7 +23,7 @@ class IDrawStrokableToolbar(IToolbar, IMediator):
 
     def setupUI(self):
         self.sizeComponent = SizeComponent(self, 'Stroke width: ', self.size)
-        self.strokeComponent = ColorComponent(self, 'Stroke color: ', self.stroke)
+        self.strokeComponent = ColorComponent(self, 'Stroke color: ', self.stroke, transparently=False)
 
     def dispatch(self, comp: IComponent, newValue, notify=True):
         if comp == self.sizeComponent:

@@ -3,13 +3,15 @@ from PyQt5.QtWidgets import QWidget
 
 
 class PaintWidget(QWidget):
-    def __init__(self, *args):
+    def __init__(self, app, *args):
         super(PaintWidget, self).__init__(*args)
+
+        self.app = app
 
         self.setMouseTracking(True)
 
     def paintEvent(self, QPaintEvent):
-        image = self.parent().image
+        image = self.app.image
 
         qp = QPainter()
         qp.begin(self)
@@ -17,14 +19,14 @@ class PaintWidget(QWidget):
         qp.end()
 
     def mousePressEvent(self, event: QMouseEvent):
-        self.parent().state.mouseDown(event)
+        self.app.state.mouseDown(event)
 
     def mouseMoveEvent(self, event):
-        self.parent().state.mouseMove(event)
+        self.app.state.mouseMove(event)
 
     def mouseReleaseEvent(self, event):
-        self.parent().state.mouseUp(event)
+        self.app.state.mouseUp(event)
 
     def resizeEvent(self, QResizeEvent):
-        self.parent().image = QImage(self.width(), self.height(), QImage.Format_RGB32)
+        self.app.image = QImage(self.width(), self.height(), QImage.Format_RGB32)
         self.repaint()
