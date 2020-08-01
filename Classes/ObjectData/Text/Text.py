@@ -20,18 +20,20 @@ class Text(IObject):
     def draw(self, image):
         qp = QPainter(image)
 
-        qp.setBrush(self.drawContext.fill)
-        qp.setPen(QPen(self.drawContext.stroke, self.drawContext.width))
+        qp.setPen(QPen(self.drawContext.stroke, 1))
         qp.setFont(self.drawContext.font)
 
         qp.drawText(self.pos.x(), self.pos.y(), self.text)
 
     def contain(self, point: QPoint) -> bool:
+        return rectContain(point, self.getRect())
+
+    def getRect(self) -> QRect:
         fm = QFontMetrics(self.drawContext.font)
         rect: QRect = fm.boundingRect(self.text)
-        rect.moveTopLeft(self.getPos())
+        rect.moveTopLeft(self.getPos() - QPoint(0, fm.height()))
 
-        return rectContain(point, rect)
+        return rect
 
     def getPos(self):
         return copy(self.pos)

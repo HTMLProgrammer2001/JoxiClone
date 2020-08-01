@@ -36,11 +36,13 @@ class TextState(IState):
         textCommand.execute()
 
         self.app.history.addCommand(textCommand)
+        self.editField.clearFocus()
 
     def mouseDown(self, event):
         if not self.begin:
             self.begin = event.pos()
             self.isDrawing = True
+            self.editField.setFocus(Qt.NoFocusReason)
         else:
             self.isDrawing = False
 
@@ -51,6 +53,7 @@ class TextState(IState):
 
             self.begin = event.pos()
             self.editField.setText('')
+            self.editField.clearFocus()
 
         self.app.repaint()
 

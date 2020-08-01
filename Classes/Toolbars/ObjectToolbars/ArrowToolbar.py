@@ -4,4 +4,4 @@ from Classes.Toolbars.ObjectToolbars.LineToolbar import LineToolbar
 
 class ArrowToolbar(LineToolbar):
     def getContext(self):
-        return ArrowDrawContext(self.color, self.size)
+        return ArrowDrawContext(self.stroke, self.size)

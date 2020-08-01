@@ -185,6 +185,9 @@ class Main(QMainWindow):
         self.repaint()
 
     def setState(self, state: IState):
+        if not hasattr(state, 'editField'):
+            self.setFocus(Qt.NoFocusReason)
+
         self.state = state
 
     def select(self, obj: IObject):
