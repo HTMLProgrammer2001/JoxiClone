@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication, QAction, QActionGroup, QDesktopWidget, QFileDialog, \
-    QToolBar, QWidget, QHBoxLayout, QScrollArea
-from PyQt5.QtGui import QImage, QKeySequence, QClipboard, QPixmap, QPainter
+    QToolBar, QWidget, QHBoxLayout, QScrollArea, QMessageBox
+from PyQt5.QtGui import QImage, QKeySequence, QClipboard, QPixmap, QPainter, QIcon
 from PyQt5.QtCore import Qt
 import sys
 from typing import List
@@ -60,6 +60,8 @@ class Main(QMainWindow):
 
         if self.defaultPix:
             paintWidget.setFixedSize(self.defaultPix.size())
+        else:
+            paintWidget.setFixedSize(500, 500)
 
         vbox.addWidget(paintWidget)
         vbox.addStretch(1)
@@ -81,6 +83,11 @@ class Main(QMainWindow):
         saveAction.triggered.connect(self.save)
         fileMenu.addAction(saveAction)
 
+        saveBufferAction = QAction('Save to buffer', self)
+        saveBufferAction.setShortcut('Ctrl+Shift+S')
+        saveBufferAction.triggered.connect(self.saveBuffer)
+        fileMenu.addAction(saveBufferAction)
+
         clearAction = QAction('Clear', self)
         clearAction.setShortcut('Ctrl+F')
         clearAction.triggered.connect(self.clear)
@@ -97,48 +104,57 @@ class Main(QMainWindow):
         fileMenu.addAction(quitAction)
 
         LineAction = QAction('Line', self)
+        LineAction.setIcon(QIcon('./Images/line.png'))
         LineAction.setCheckable(True)
         LineAction.setChecked(True)
         LineAction.triggered.connect(lambda x: self.setState(LineState(self)))
         commandsGroup.addAction(LineAction)
 
         RectAction = QAction('Rect', self)
+        RectAction.setIcon(QIcon('./Images/rect.png'))
         RectAction.setCheckable(True)
         RectAction.triggered.connect(lambda x: self.setState(RectState(self)))
         commandsGroup.addAction(RectAction)
 
         CircleAction = QAction('Ellipse', self)
+        CircleAction.setIcon(QIcon('./Images/ellipse.png'))
         CircleAction.setCheckable(True)
         CircleAction.triggered.connect(lambda x: self.setState(EllipseState(self)))
         commandsGroup.addAction(CircleAction)
 
         ArrowAction = QAction('Arrow', self)
         ArrowAction.setCheckable(True)
+        ArrowAction.setIcon(QIcon('./Images/arrow.png'))
         ArrowAction.triggered.connect(lambda x: self.setState(ArrowState(self)))
         commandsGroup.addAction(ArrowAction)
 
         PenAction = QAction('Pen', self)
+        PenAction.setIcon(QIcon('./Images/poly.png'))
         PenAction.setCheckable(True)
         PenAction.triggered.connect(lambda x: self.setState(PenState(self)))
         commandsGroup.addAction(PenAction)
 
         PencilAction = QAction('Pencil', self)
         PencilAction.setCheckable(True)
+        PencilAction.setIcon(QIcon('./Images/pencil.png'))
         PencilAction.triggered.connect(lambda x: self.setState(PencilState(self)))
         commandsGroup.addAction(PencilAction)
 
         ImageAction = QAction('Image', self)
         ImageAction.setCheckable(True)
+        ImageAction.setIcon(QIcon('./Images/image.png'))
         ImageAction.triggered.connect(lambda x: self.addImage())
         commandsGroup.addAction(ImageAction)
 
         TextAction = QAction('Text', self)
         TextAction.setCheckable(True)
+        TextAction.setIcon(QIcon('./Images/text.png'))
         TextAction.triggered.connect(lambda x: self.setState(TextState(self)))
         commandsGroup.addAction(TextAction)
 
         EditAction = QAction('Edit', self)
         EditAction.setCheckable(True)
+        EditAction.setIcon(QIcon('./Images/move.png'))
         EditAction.triggered.connect(lambda x: self.setState(MoveState(self)))
         commandsGroup.addAction(EditAction)
 
@@ -187,6 +203,12 @@ class Main(QMainWindow):
     def save(self):
         path = QFileDialog().getSaveFileName(self, 'Save image', '', '*.jpg')
         self.image.save(path[0])
+
+    def saveBuffer(self):
+        cb: QClipboard = QApplication.clipboard()
+        cb.setImage(self.image, mode=cb.Clipboard)
+
+        QMessageBox.information(self, 'Copy', 'Image copied to buffer')
 
     def back(self):
         self.history.removeCommand()

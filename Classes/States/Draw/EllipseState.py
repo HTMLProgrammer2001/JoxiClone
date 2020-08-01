@@ -54,6 +54,8 @@ class EllipseState(IState):
             newEndX = end.x() + (end.x() - self.begin.x())
             newEndY = end.y() + (end.y() - self.begin.y())
 
+            print(end.x() - self.begin.x())
+
             end = QPoint(newEndX, newEndY)
 
         self.end = end
