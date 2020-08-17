@@ -104,7 +104,7 @@ class DrawWindow(MainDesign):
 
     def saveServer(self):
         name = 'tmp.png'
-        url = 'http://localhost:5000/save'
+        url = 'https://joxi-server.herokuapp.com/save'
 
         self.image.save(f"./{name}")
 

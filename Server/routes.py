@@ -26,7 +26,7 @@ def save_file():
 
         return jsonify({
         'message': 'Photo successfully saved. Path in your buffer',
-        'path': f'http://localhost:5000/image/{lastFile.name}'
+        'path': f'{request.host_url}/image/{lastFile.name}'
     })
 
     secureName = get_random_string(16)
