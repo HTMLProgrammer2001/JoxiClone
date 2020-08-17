@@ -1,14 +1,14 @@
 import math
 
 from PyQt5.QtCore import QPoint
-from PyQt5.QtGui import QPainter, QPen, QPainterPath, QColor
+from PyQt5.QtGui import QPainter, QPen, QPainterPath
 
 from Classes.ObjectData.Arrow.ArrowDrawContext import ArrowDrawContext
 from Classes.ObjectData.Arrow.ArrowMemento import ArrowMemento
 from Classes.ObjectData.Line.Line import Line
 from Classes.States.Edit.EditArrowState import EditArrowState
 from Intefaces.IEditState import IEditState
-from helpers import getDistance
+from Common.helpers import getDistance
 
 
 class Arrow(Line):

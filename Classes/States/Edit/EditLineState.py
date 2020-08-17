@@ -8,7 +8,7 @@ from Intefaces.IState import IState
 from Intefaces.IEditState import IEditState
 from Classes.Toolbars.ObjectToolbars.LineToolbar import LineToolbar
 from Intefaces.IToolbar import IToolbar
-from helpers import getDistance, getBiggerDiff
+from Common.helpers import getDistance, getBiggerDiff
 
 
 class EditLineState(IEditState, IState):

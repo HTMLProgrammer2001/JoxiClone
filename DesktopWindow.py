@@ -2,7 +2,7 @@ from PyQt5.QtCore import Qt, QPoint, QRect
 from PyQt5.QtGui import QPixmap, QPainter, QColor, QKeySequence
 from PyQt5.QtWidgets import QApplication, QMainWindow, QShortcut
 
-from main import Main
+from DrawWindow import Main
 
 
 class MainW(QMainWindow):

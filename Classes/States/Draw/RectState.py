@@ -7,7 +7,7 @@ from Intefaces.IState import IState
 from Classes.ObjectData.Rect.Rect import Rect
 from Classes.Commands.Create.CreateRect import CreateRect
 from Classes.Toolbars.ObjectToolbars.RectToolbar import RectToolbar
-from helpers import getBiggerDiff
+from Common.helpers import getBiggerDiff
 
 
 class RectState(IState):

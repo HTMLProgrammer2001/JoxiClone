@@ -7,7 +7,7 @@ from Intefaces.IEditState import IEditState
 from Classes.Commands.EditCommand import EditCommand
 from Intefaces.IToolbar import IToolbar
 from Classes.Toolbars.ObjectToolbars.EllipseToolbar import EllipseToolbar
-from helpers import getDistance
+from Common.helpers import getDistance
 
 
 class EditEllipseState(IEditState, IState):

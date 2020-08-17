@@ -6,7 +6,7 @@ from Classes.ObjectData.Pen.PenMemento import PenMemento
 from Classes.Toolbars.ObjectToolbars.PenToolbar import PenToolbar
 from Intefaces.IEditState import IEditState
 from Intefaces.IToolbar import IToolbar
-from helpers import getDistance
+from Common.helpers import getDistance
 
 
 class EditPenState(IEditState):

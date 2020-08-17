@@ -6,7 +6,7 @@ from Intefaces.IState import IState
 from Classes.ObjectData.Line.Line import Line
 from Classes.Commands.Create.CreateLine import CreateLine
 from Classes.Toolbars.ObjectToolbars.LineToolbar import LineToolbar
-from helpers import getBiggerDiff
+from Common.helpers import getBiggerDiff
 
 
 class LineState(IState):

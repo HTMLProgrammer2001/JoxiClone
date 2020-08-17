@@ -6,7 +6,7 @@ from Classes.ObjectData.Rect.RectMemento import RectMemento
 from Intefaces.IObject import IObject
 from Classes.States.Edit.EditRectState import EditRectState
 from Intefaces.IEditState import IEditState
-from helpers import rectContain
+from Common.helpers import rectContain
 
 
 class Rect(IObject):

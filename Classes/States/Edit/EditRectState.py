@@ -6,7 +6,7 @@ from Intefaces.IState import IState
 from Intefaces.IEditState import IEditState
 from Classes.Toolbars.ObjectToolbars.RectToolbar import RectToolbar
 from Intefaces.IToolbar import IToolbar
-from helpers import getDistance
+from Common.helpers import getDistance
 
 
 class EditRectState(IEditState, IState):

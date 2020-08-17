@@ -8,7 +8,7 @@ from Classes.ObjectData.Ellipse.EllipseMemento import EllipseMemento
 from Intefaces.IObject import IObject
 from Intefaces.IEditState import IEditState
 from Classes.States.Edit.EditEllipseState import EditEllipseState
-from helpers import getEllipseDistance
+from Common.helpers import getEllipseDistance
 
 
 class Ellipse(IObject):

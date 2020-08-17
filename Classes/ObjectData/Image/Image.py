@@ -8,7 +8,7 @@ from Classes.ObjectData.Image.ImageMemento import ImageMemento
 from Classes.States.Edit.EditImageState import EditImageState
 from Intefaces.IEditState import IEditState
 from Intefaces.IObject import IObject
-from helpers import rectContain
+from Common.helpers import rectContain
 
 
 class Image(IObject):

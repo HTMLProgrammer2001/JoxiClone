@@ -8,7 +8,7 @@ from Classes.ObjectData.Text.TextMemento import TextMemento
 from Classes.States.Edit.EditTextState import EditTextState
 from Intefaces.IEditState import IEditState
 from Intefaces.IObject import IObject
-from helpers import rectContain
+from Common.helpers import rectContain
 
 
 class Text(IObject):

@@ -8,7 +8,7 @@ from Intefaces.IObject import IObject
 from Classes.ObjectData.Line.LineDrawContext import LineDrawContext
 from Classes.States.Edit.EditLineState import EditLineState
 from Intefaces.IEditState import IEditState
-from helpers import lineContain
+from Common.helpers import lineContain
 
 
 class Line(IObject):
