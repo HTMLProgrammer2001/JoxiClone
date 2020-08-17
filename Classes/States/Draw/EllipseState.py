@@ -62,7 +62,7 @@ class EllipseState(IState):
         self.app.repaint()
 
     def paint(self, image):
-        if not self.begin:
+        if not self.begin or not self.end:
             return
 
         radX = abs(self.end.x() - self.begin.x())

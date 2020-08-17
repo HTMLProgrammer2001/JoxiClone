@@ -1,6 +1,7 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QKeySequence
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QActionGroup, QAction, QToolBar, QMainWindow
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QActionGroup, QAction, QToolBar, QMainWindow, \
+    QScrollArea
 
 from Classes.Toolbars.NoneToolbar import NoneToolbar
 from PaintWidget import PaintWidget
@@ -10,7 +11,9 @@ class MainDesign(QMainWindow):
     def setupUI(self):
         # setting window
         self.showMaximized()
+        self.setMouseTracking(True)
 
+        scroll = QScrollArea(self)
         centWidget = QWidget(self)
         paintWidget = PaintWidget(self, self)
 
@@ -21,14 +24,15 @@ class MainDesign(QMainWindow):
         if self.defaultPix:
             paintWidget.setFixedSize(self.defaultPix.size())
         else:
-            paintWidget.setFixedSize(500, 500)
+            paintWidget.setFixedSize(self.size())
 
         vbox.addWidget(paintWidget)
         vbox.addStretch(1)
 
         centWidget.setLayout(vbox)
+        scroll.setWidget(paintWidget)
 
-        self.setCentralWidget(centWidget)
+        self.setCentralWidget(scroll)
         self.setWindowTitle('Paint')
 
         # create menu

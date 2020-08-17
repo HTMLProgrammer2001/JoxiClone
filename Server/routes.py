@@ -22,7 +22,12 @@ def save_file():
     print(image)
 
     if not image:
-        return abort(422)
+        lastFile = File.query.order_by(File.id.desc()).first()
+
+        return jsonify({
+        'message': 'Photo successfully saved. Path in your buffer',
+        'path': f'http://localhost:5000/image/{lastFile.name}'
+    })
 
     secureName = get_random_string(16)
     extension = image.filename.rsplit('.', 1)[1]
@@ -35,10 +40,7 @@ def save_file():
 
     image.save(os.path.join(uploads_dir, fullName))
 
-    return jsonify({
-        'message': 'Photo successfully saved',
-        'path': f'http://localhost:5000/image/{secureName}'
-    })
+    return 200
 
 
 @app.route('/image/<imageName>')

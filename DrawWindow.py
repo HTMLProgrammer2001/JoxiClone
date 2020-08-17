@@ -1,12 +1,11 @@
 from PyQt5 import QtNetwork
 from PyQt5.QtWidgets import QApplication, QDesktopWidget, QFileDialog, QMessageBox
-from PyQt5.QtGui import QImage, QClipboard, QPixmap, QPainter
+from PyQt5.QtGui import QImage, QClipboard, QPixmap, QPainter, QIcon
 from PyQt5.QtCore import Qt, QUrl
-import sys
 from typing import List
 from pickle import dumps, loads
-import binascii
-import requests
+from json import loads
+import binascii, requests, sys
 
 from Classes.Commands.Create.CreateImage import CreateImage
 from Classes.Commands.DeleteCommand import DeleteCommand
@@ -26,7 +25,7 @@ from Classes.Commands.ClearCommand import ClearCommand
 from Designs.MainDesign import MainDesign
 
 
-class Main(MainDesign):
+class DrawWindow(MainDesign):
     contextToolbar = None
     manager = QtNetwork.QNetworkAccessManager()
 
@@ -54,6 +53,9 @@ class Main(MainDesign):
         # history of changes and objects
         self.history = History.getInstance()
         self.objects: List[IObject] = []
+
+        self.setWindowIcon(QIcon('./Images/Logo.ico'))
+        self.setWindowTitle('Joxi paint')
 
     def addHandlers(self):
         self.saveAction.triggered.connect(self.save)
@@ -125,8 +127,22 @@ class Main(MainDesign):
                 self.manager.post(request_qt, request.body)
 
     def saveServerFinished(self, reply: QtNetwork.QNetworkReply):
-        print('Saved')
-        print(reply.readAll())
+        if reply.error():
+            QMessageBox.critical(self, 'Query error', reply.errorString())
+            return
+
+        try:
+            data = loads(bytes(reply.readAll()))
+
+            QMessageBox.information(self, 'Success query', data['message'])
+        except Exception as e:
+            QMessageBox.critical(self, 'Query error', 'Error in parsing')
+            print(e)
+            return
+
+        cb: QClipboard = QApplication.clipboard()
+        cb.setImage(self.image, mode=cb.Clipboard)
+        cb.setText(data['path'], mode=cb.Clipboard)
 
     def back(self):
         self.history.removeCommand()
@@ -221,6 +237,6 @@ class Main(MainDesign):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    main = Main()
+    main = DrawWindow()
 
     sys.exit(app.exec_())

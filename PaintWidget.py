@@ -7,7 +7,6 @@ class PaintWidget(QWidget):
         super(PaintWidget, self).__init__(*args)
 
         self.app = app
-
         self.setMouseTracking(True)
 
     def paintEvent(self, QPaintEvent):
@@ -20,12 +19,15 @@ class PaintWidget(QWidget):
 
     def mousePressEvent(self, event: QMouseEvent):
         self.app.state.mouseDown(event)
+        self.repaint()
 
     def mouseMoveEvent(self, event):
         self.app.state.mouseMove(event)
+        self.repaint()
 
     def mouseReleaseEvent(self, event):
         self.app.state.mouseUp(event)
+        self.repaint()
 
     def resizeEvent(self, QResizeEvent):
         self.app.image = QImage(self.width(), self.height(), QImage.Format_RGB32)

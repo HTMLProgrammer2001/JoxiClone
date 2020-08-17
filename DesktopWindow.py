@@ -1,17 +1,21 @@
-from PyQt5.QtCore import Qt, QPoint, QRect
-from PyQt5.QtGui import QPixmap, QPainter, QColor, QKeySequence
+from PyQt5.QtCore import Qt, QPoint, QRect, QObject, pyqtSignal
+from PyQt5.QtGui import QPixmap, QPainter, QColor, QKeySequence, QIcon
 from PyQt5.QtWidgets import QApplication, QMainWindow, QShortcut
 
-from DrawWindow import Main
+
+class ScreenShotMaked(QObject):
+    event = pyqtSignal(QPixmap)
 
 
-class MainW(QMainWindow):
+class DesktopWindow(QMainWindow):
     begin: QPoint = QPoint(0, 0)
     end: QPoint = QPoint(0, 0)
     screenShot: QPixmap = None
 
     def __init__(self):
         super().__init__()
+
+        self.screenShotSignal = ScreenShotMaked()
 
         self.takeScreenShot()
         self.addHandlers()
@@ -21,18 +25,17 @@ class MainW(QMainWindow):
         self.screenShot = QApplication.primaryScreen().grabWindow(0)
 
     def addHandlers(self):
-        exitShortCut = QShortcut('Escape', self)
-        exitShortCut.activated.connect(lambda *args: app.quit())
+        self.exitShortCut = QShortcut('Escape', self)
+        self.exitShortCut.activated.connect(lambda *args: self.close())
 
-        allShortCut = QShortcut(QKeySequence('Ctrl+A'), self)
-        allShortCut.activated.connect(self.selectAll)
+        self.allShortCut = QShortcut(QKeySequence('Ctrl+A'), self)
+        self.allShortCut.activated.connect(self.selectAll)
 
     def selectAll(self):
         self.begin = QPoint(0, 0)
         self.end = self.rect().bottomRight()
 
         self.selected()
-
         self.repaint()
 
     def selected(self):
@@ -46,12 +49,12 @@ class MainW(QMainWindow):
             begin, end = QPoint(begin.x(), end.y()), QPoint(end.x(), begin.y())
 
         self.close()
-        Main(self.screenShot.copy(QRect(begin, end)))
+        self.screenShotSignal.event.emit(self.screenShot.copy(QRect(begin, end)))
 
     def setupUI(self):
-        self.resize(300, 300)
+        self.setWindowTitle('Joxi')
+        self.setWindowIcon(QIcon('./Images/Logo.ico'))
         self.setWindowFlag(Qt.FramelessWindowHint)
-
         self.showMaximized()
 
     def paintEvent(self, *args, **kwargs):
@@ -85,7 +88,8 @@ class MainW(QMainWindow):
             self.selected()
 
 
-app = QApplication([])
-m = MainW()
+if __name__ == '__main__':
+    app = QApplication([])
+    m = DesktopWindow()
 
-app.exec_()
+    app.exec_()

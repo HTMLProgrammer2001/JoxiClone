@@ -11,7 +11,7 @@ class ArrowState(LineState):
         self.app.setToolbar(ArrowToolbar())
 
     def paint(self, image):
-        if not self.begin:
+        if not self.begin or not self.end:
             return
 
         arrow = Arrow(self.begin, self.end, self.createContext())

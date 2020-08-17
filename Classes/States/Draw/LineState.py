@@ -54,7 +54,7 @@ class LineState(IState):
         self.app.repaint()
 
     def paint(self, image):
-        if not self.begin:
+        if not self.begin or not self.end:
             return
 
         line = Line(self.begin, self.end, self.createContext())

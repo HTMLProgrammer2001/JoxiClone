@@ -59,7 +59,7 @@ class RectState(IState):
         self.app.repaint()
 
     def paint(self, image):
-        if not self.begin:
+        if not self.begin or not self.end:
             return
 
         rect = Rect(QRect(self.begin, self.end), self.createContext())
