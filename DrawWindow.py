@@ -26,7 +26,6 @@ from Designs.MainDesign import MainDesign
 
 class DrawWindow(MainDesign):
     contextToolbar = None
-    manager = QtNetwork.QNetworkAccessManager()
 
     def __init__(self, pix: QPixmap = None):
         super().__init__()
@@ -68,7 +67,7 @@ class DrawWindow(MainDesign):
         self.ArrowAction.triggered.connect(lambda x: self.setState(ArrowState(self)))
         self.PenAction.triggered.connect(lambda x: self.setState(PenState(self)))
         self.PencilAction.triggered.connect(lambda x: self.setState(PencilState(self)))
-        self.ImageAction.triggered.connect(lambda x: self.addImage())
+        self.ImageAction.triggered.connect(lambda x: , self.addImage())
         self.TextAction.triggered.connect(lambda x: self.setState(TextState(self)))
         self.EditAction.triggered.connect(lambda x: self.setState(MoveState(self)))
 

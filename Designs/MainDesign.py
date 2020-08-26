@@ -99,7 +99,6 @@ class MainDesign(QMainWindow):
         self.ImageAction = QAction('Image', self)
         self.ImageAction.setCheckable(True)
         self.ImageAction.setIcon(QIcon('./Images/image.png'))
-        self.ImageAction.triggered.connect(lambda x: self.addImage())
         commandsGroup.addAction(self.ImageAction)
 
         self.TextAction = QAction('Text', self)
