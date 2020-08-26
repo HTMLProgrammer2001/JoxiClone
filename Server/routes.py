@@ -26,13 +26,13 @@ def save_file():
 
         return jsonify({
         'message': 'Photo successfully saved. Path in your buffer',
-        'path': f'{request.host_url}/image/{lastFile.name}'
+        'path': f'{request.host_url}image/{lastFile.name}'
     })
 
     secureName = get_random_string(16)
     extension = image.filename.rsplit('.', 1)[1]
     fullName = secureName + '.' + extension
-    uploads_dir = './Server/files'
+    uploads_dir = './files'
     file = File(name=secureName, extension=extension)
 
     db.session.add(file)
@@ -50,4 +50,4 @@ def get_image(imageName: str):
     if not file:
         return abort(404)
 
-    return send_file(f"files/{file.name}.{file.extension}")
+    return send_file(f"./files/{file.name}.{file.extension}")
