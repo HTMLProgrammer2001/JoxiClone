@@ -1,16 +1,15 @@
-from PyQt5 import QtNetwork
-from PyQt5.QtWidgets import QApplication, QDesktopWidget, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QApplication, QFileDialog, QMessageBox
 from PyQt5.QtGui import QImage, QClipboard, QPixmap, QPainter, QIcon
-from PyQt5.QtCore import Qt, QUrl
+from PyQt5.QtCore import Qt
 from typing import List
 from pickle import dumps, loads
-from json import loads
-import binascii, requests, sys
+import binascii, sys
 
 from Classes.Commands.Create.CreateImage import CreateImage
 from Classes.Commands.DeleteCommand import DeleteCommand
 from Classes.Commands.PasteCommand import PasteCommand
 from Classes.History import History
+from Classes.SaveManager import SaveManager
 from Classes.States.Draw.ArrowState import ArrowState
 from Classes.States.Draw.LineState import LineState
 from Classes.States.Draw.PencilState import PencilState
@@ -35,15 +34,13 @@ class DrawWindow(MainDesign):
         # set image from desktop screen shot
         self.defaultPix = pix
 
-        # connect successfull save handler
-        self.manager.finished.connect(self.saveServerFinished)
+        self.saveManager = SaveManager(self)
 
         # create image
         self.image = QImage(350, 380, QImage.Format_RGB32)
         self.image.fill(Qt.white)
 
         # settings of GUI
-        self.center()
         self.setupUI()
         self.addHandlers()
 
@@ -58,9 +55,9 @@ class DrawWindow(MainDesign):
         self.setWindowTitle('Joxi paint')
 
     def addHandlers(self):
-        self.saveAction.triggered.connect(self.save)
-        self.saveBufferAction.triggered.connect(self.saveBuffer)
-        self.saveServerAction.triggered.connect(self.saveServer)
+        self.saveAction.triggered.connect(lambda *args: self.saveManager.save(self.image))
+        self.saveBufferAction.triggered.connect(lambda *args: self.saveManager.saveBuffer(self.image))
+        self.saveServerAction.triggered.connect(lambda *args: self.saveManager.saveServer(self.image))
         self.clearAction.triggered.connect(self.clear)
         self.unExecuteAction.triggered.connect(self.back)
         self.quitAction.triggered.connect(self.quit)
@@ -78,6 +75,7 @@ class DrawWindow(MainDesign):
         self.pasteAction.triggered.connect(self.paste)
 
     def clear(self):
+        # clear window
         command = ClearCommand(self)
         command.execute()
         self.history.addCommand(command)
@@ -85,64 +83,13 @@ class DrawWindow(MainDesign):
 
     def setToolbar(self, toolbar):
         if self.contextToolbar:
+            #delete old toolbar
             self.contextToolbar.destroy()
             self.contextToolbar.hide()
 
+        # set new toolbar
         self.contextToolbar = toolbar
-
         self.addToolBar(Qt.TopToolBarArea, self.contextToolbar)
-
-    def save(self):
-        path = QFileDialog().getSaveFileName(self, 'Save image', '', '*.jpg')
-        self.image.save(path[0])
-
-    def saveBuffer(self):
-        cb: QClipboard = QApplication.clipboard()
-        cb.setImage(self.image, mode=cb.Clipboard)
-
-        QMessageBox.information(self, 'Copy', 'Image copied to buffer')
-
-    def saveServer(self):
-        name = 'tmp.png'
-        url = 'https://joxi-server.herokuapp.com/save'
-
-        self.image.save(f"./{name}")
-
-        with open(f"./{name}", 'rb') as img:
-            files = {'image': (name, img, 'multipart/form-data', {'Expires': '0'})}
-
-            with requests.Session() as s:
-                r = s.post(url, files=files)
-                request = r.request
-                request.prepare(method="POST", url=url)
-
-                request_qt = QtNetwork.QNetworkRequest(QUrl(url))
-
-                for header, value in request.headers.items():
-                    request_qt.setRawHeader(bytes(header, encoding="utf-8"),
-                                            bytes(value, encoding="utf-8"))
-
-                self.manager = QtNetwork.QNetworkAccessManager()
-                self.manager.finished.connect(self.saveServerFinished)
-                self.manager.post(request_qt, request.body)
-
-    def saveServerFinished(self, reply: QtNetwork.QNetworkReply):
-        if reply.error():
-            QMessageBox.critical(self, 'Query error', reply.errorString())
-            return
-
-        try:
-            data = loads(bytes(reply.readAll()))
-
-            QMessageBox.information(self, 'Success query', data['message'])
-        except Exception as e:
-            QMessageBox.critical(self, 'Query error', 'Error in parsing')
-            print(e)
-            return
-
-        cb: QClipboard = QApplication.clipboard()
-        cb.setImage(self.image, mode=cb.Clipboard)
-        cb.setText(data['path'], mode=cb.Clipboard)
 
     def back(self):
         self.history.removeCommand()
@@ -155,8 +102,10 @@ class DrawWindow(MainDesign):
         self.state = state
 
     def select(self, obj: IObject):
+        # set edit mode
         self.setState(obj.getEditMode(self))
 
+        # enable actions
         self.deleteAction.triggered.connect(lambda *args: self.delete(obj))
         self.deleteAction.setDisabled(False)
 
@@ -164,9 +113,11 @@ class DrawWindow(MainDesign):
         self.copyAction.setDisabled(False)
 
     def unSelect(self):
+        # set move mode
         self.setState(MoveState(self))
         self.repaint()
 
+        # disable actions
         self.deleteAction.triggered.connect(lambda *args: None)
         self.deleteAction.setDisabled(True)
 
@@ -209,18 +160,11 @@ class DrawWindow(MainDesign):
 
             self.history.addCommand(imageComm)
 
-    def center(self):
-        fr = self.frameGeometry()
-        qr = QDesktopWidget().availableGeometry().center()
-
-        fr.moveCenter(qr)
-
-        self.move(fr.topLeft())
-
     def quit(self):
         app.exit()
 
     def paintEvent(self, *args, **kwargs):
+        # repaint app
         self.image.fill(Qt.white)
 
         if self.defaultPix:

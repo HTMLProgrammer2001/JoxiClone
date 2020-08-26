@@ -90,6 +90,6 @@ class DesktopWindow(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication([])
-    m = DesktopWindow()
+    DesktopWindow()
 
     app.exec_()
